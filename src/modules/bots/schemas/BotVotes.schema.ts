@@ -6,9 +6,9 @@ export default class BotVotes{
     constructor({
         current,
         voteslog
-    }: any){
+    }: any, showVotes = false){
         this.current = current
-        this.voteslog = voteslog
+        this.voteslog = (showVotes) ? voteslog : undefined
     }
 
     @Prop({
@@ -16,9 +16,6 @@ export default class BotVotes{
     })
     current: number
 
-    @Prop({
-        ref: 'Users',
-        type: String
-    })
-    voteslog: User[] | string[]
+    @Prop([String])
+    voteslog: string[]
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, HttpException, HttpStatus, Param, Query, Res } from "@nestjs/common";
 import { BotService } from "src/modules/bots/bot.service";
 import { UserService } from "src/modules/users/User.service";
 
@@ -10,8 +10,13 @@ export default class UserController {
         return this.userService.show(id, avatarBuffer)
     }
 
-    @Get()
-    async test(){
-        return this.botService.show()
+    @Get(':id/bots')
+    async getBots(@Param('id') id: string){
+        const user = await this.userService.show(id, false).catch(err => {
+            throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND)
+        })
+        
+        return this.botService.getBotsByOwner(user)
     }
+    
 }
