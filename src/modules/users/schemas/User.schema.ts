@@ -8,6 +8,25 @@ import UserDetails from './UserDetails.schema'
     collection: 'users'
 })
 export class User{
+    constructor({
+        _id,
+        username,
+        discriminator,
+        avatar,
+        avatarBuffer,
+        dates,
+        details
+    }: any, enableAvatar: boolean){
+        this._id = _id
+        this.username = username
+        this.discriminator = discriminator
+        this.avatar = avatar
+        this.avatarBuffer = (enableAvatar) ? avatarBuffer : undefined
+        this.dates = dates
+        this.details = new UserDetails(details)
+    }
+
+
     @Prop()
     _id: string
 
@@ -33,32 +52,6 @@ export class User{
 
     @Prop(UserDetails)
     details: UserDetails
-
-    static convertToSchema({
-        _id,
-        username,
-        discriminator,
-        avatar,
-        avatarBuffer,
-        dates,
-        details
-    }: any, enableAvatar: boolean): User{
-        const converted = {
-            _id,
-            username,
-            discriminator,
-            avatar,
-            avatarBuffer,
-            dates,
-            details: {
-                description: details.description,
-                role: details.role
-            }
-        }
-        if(!enableAvatar)
-            delete converted.avatarBuffer
-        return converted
-    }
 }
 
 export type UserDocument = User & Document

@@ -13,6 +13,6 @@ export class UserService{
     }
     
     async show(id: string, avatarBuffer = false): Promise<User>{
-        return User.convertToSchema(await this.userModel.findById(id).exec(), avatarBuffer)
+        return new User(await this.userModel.findById(id).exec(), avatarBuffer)
     }
 }
