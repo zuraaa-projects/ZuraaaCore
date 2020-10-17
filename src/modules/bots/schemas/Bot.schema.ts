@@ -25,7 +25,7 @@ export class Bot {
         approvedBy,
         votes,
         count
-    }: any, enableAvatar: boolean){
+    }: any, enableAvatar: boolean, showVotes: boolean){
         this._id = _id
         this.username = username,
         this.discriminator = discriminator
@@ -36,7 +36,7 @@ export class Bot {
         this.dates = new BotDate(dates)
         this.details = new BotDetails(details)
         this.approvedBy = approvedBy
-        this.votes = new BotVotes(votes)
+        this.votes = new BotVotes(votes, showVotes)
         this.count = new BotCount(count)
     }
 

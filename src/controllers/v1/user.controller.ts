@@ -7,13 +7,15 @@ export default class UserController {
     constructor(private readonly userService: UserService, private readonly botService: BotService){}
     @Get(':id')
     async show(@Param('id') id: string, @Query('avatarBuffer') avatarBuffer: boolean){
-        return this.userService.show(id, avatarBuffer)
+        return this.userService.show(id, avatarBuffer).catch(err => {
+            throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
+        })
     }
 
     @Get(':id/bots')
     async getBots(@Param('id') id: string){
         const user = await this.userService.show(id, false).catch(err => {
-            throw new HttpException('Usuario não encontrado', HttpStatus.NOT_FOUND)
+            throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
         })
         
         return this.botService.getBotsByOwner(user)

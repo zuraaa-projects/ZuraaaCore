@@ -6,7 +6,7 @@ export default class BotVotes{
     constructor({
         current,
         voteslog
-    }: any, showVotes = false){
+    }: any, showVotes: boolean){
         this.current = current
         this.voteslog = (showVotes) ? voteslog : undefined
     }

@@ -22,9 +22,13 @@ export class BotService {
         let botsFormated: Bot[] = []
         
         for(const bot of bots){
-            botsFormated.push(new Bot(bot, false))
+            botsFormated.push(new Bot(bot, false, false))
         }
 
         return botsFormated
+    }
+
+    async show(id: string, avatarBuffer = false, voteLog = false){
+        return new Bot(await this.botModel.findById(id).exec(), avatarBuffer, voteLog)
     }
 }
