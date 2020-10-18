@@ -1,15 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv'
-import * as path from 'path'
+import { configSession, helmet } from './utils/express.plugins'
 
-dotenv.config({
-  path: path.join(__dirname, '..', '.env')
-})
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(helmet)
+  app.use(configSession())
+  app.enableCors()
   await app.listen(3000);
 }
 bootstrap();

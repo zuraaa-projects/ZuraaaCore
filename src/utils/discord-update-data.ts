@@ -1,11 +1,14 @@
 import Axios from 'axios'
-import { Document, Query } from 'mongoose'
+import { Document } from 'mongoose'
 import { DiscordBotService, DiscordUser, DiscordUtils } from 'src/extension-modules/discord/discord-bot.service'
 
-export async function updateDiscordData<Doc extends Document>(doc: Doc & BaseDiscordSchema, discordService: DiscordBotService){
+export async function updateDiscordData<Doc extends Document>(doc: Doc & BaseDiscordSchema, discordService: DiscordBotService | DiscordUser){
     try{
-        const discordUser = await discordService.getUser(doc._id)
-        
+        let discordUser: DiscordUser
+        if(discordService instanceof DiscordBotService)
+            discordUser = await discordService.getUser(doc._id)
+        else 
+            discordUser = discordService
         
         doc.username = discordUser.username 
         doc.discriminator = discordUser.discriminator
