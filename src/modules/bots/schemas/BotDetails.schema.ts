@@ -78,11 +78,8 @@ export class BotDetails{
     })
     website: string
 
-    @Prop({
-        type: String,
-        ref: 'User'
-    })
-    otherOwners: User[] | string[]
+    @Prop([String])
+    otherOwners: string[]
 
     @Prop({
         maxlength: 255
