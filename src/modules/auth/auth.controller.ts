@@ -1,19 +1,11 @@
-import { Body, Controller, HttpException, HttpStatus, Post, Req, Session } from "@nestjs/common";
-import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
-import { UserService } from "../users/User.service";
+import { Controller, Post, UseGuards, Request } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('auth')
 export default class AuthController{
-    constructor(private readonly discordService: DiscordBotService, private readonly userService: UserService){}
-
+    @UseGuards(AuthGuard('local'))
     @Post('user')
-    async userLogin(@Body('code') code: string, @Session() session: Express.Session){        
-        const user = await this.discordService.getUserLogin(code).catch(() => {
-            throw new HttpException('\'code\' é invalido.', HttpStatus.BAD_REQUEST)
-        })
-
-        session.user = await this.userService.login(user)
-        session.save(console.error)
-        return session.id
+    async login(@Request() req: Express.Request){
+        return req.user
     }
 }

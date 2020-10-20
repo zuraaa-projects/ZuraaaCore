@@ -1,14 +1,18 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
 import { DiscordModule } from "src/extension-modules/discord/discord.module";
 import { UserModule } from "../users/User.module";
 import AuthController from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { LocalStrategy } from "./local.strategy";
 
 @Module({
     imports: [
-        ConfigModule,
         DiscordModule,
         UserModule
+    ],
+    providers: [
+        AuthService,
+        LocalStrategy
     ],
     controllers: [
         AuthController

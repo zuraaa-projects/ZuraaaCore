@@ -1,13 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { configSession, helmet } from './utils/express.plugins'
-
+import { helmet } from './utils/express.plugins'
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(helmet)
-  app.use(configSession())
   app.enableCors()
   await app.listen(3000);
 }

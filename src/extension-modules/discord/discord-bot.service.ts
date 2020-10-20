@@ -23,11 +23,11 @@ export class DiscordBotService{
 
     async getUserLogin(code: string){
         const params = new URLSearchParams()
-        params.append('client_id', this.configService.get<string>('DISCORD_APP_ID'))
-        params.append('client_secret', this.configService.get<string>('DISCORD_APP_SECRET'))
+        params.append('client_id', this.configService.get<string>('DISCORD_APP_ID')!)
+        params.append('client_secret', this.configService.get<string>('DISCORD_APP_SECRET')!)
         params.append('grant_type', 'authorization_code')
-        params.append('scope', this.configService.get<string>('DISCORD_APP_SCOPE'))
-        params.append('redirect_uri', this.configService.get<string>('DISCORD_APP_REDIRECT_URI'))
+        params.append('scope', this.configService.get<string>('DISCORD_APP_SCOPE')!)
+        params.append('redirect_uri', this.configService.get<string>('DISCORD_APP_REDIRECT_URI')!)
         params.append('code', code)
 
         const { data: tokenUser } = await Axios.post('/oauth2/token', params.toString(), {

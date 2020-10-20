@@ -14,8 +14,10 @@ export class UserService{
         return userCreated.save()
     }
     
-    async show(id: string, avatarBuffer = false): Promise<User>{
+    async show(id: string, avatarBuffer = false){
         const result = await this.userModel.findById(id).exec()
+        if(!result)
+            return
         return new User(await updateDiscordData(result, this.discordService), avatarBuffer)
     }
 

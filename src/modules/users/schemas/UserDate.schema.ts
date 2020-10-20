@@ -6,11 +6,11 @@ export default class UserDate{
         default: Date.now(),
         type: Date
     })
-    firstSeen: Date
+    firstSeen!: Date
 
     @Prop()
-    lastBotAdd: Date
+    lastBotAdd!: Date
 
     @Prop()
-    nextVote: Date
+    nextVote!: Date
 }

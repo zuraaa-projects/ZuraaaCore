@@ -32,6 +32,8 @@ export class BotService {
 
     async show(id: string, avatarBuffer = false, voteLog = false){
         const result = await this.botModel.findById(id).exec()
+        if(!result)
+            return
         return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
     }
 }

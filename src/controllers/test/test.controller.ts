@@ -5,7 +5,6 @@ import { DiscordBotService } from "src/extension-modules/discord/discord-bot.ser
 export default class TestController{
     constructor(private readonly discordBot: DiscordBotService){}
     @Get()
-    async index(@Session() { user }: Express.Session){
-        return user
+    async index(@Session() session: Express.Session){
     }
 }
