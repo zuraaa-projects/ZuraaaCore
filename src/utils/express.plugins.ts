@@ -1,5 +1,4 @@
 import Helmet from 'helmet'
-import { env } from 'process'
 
 export const helmet = Helmet({
     referrerPolicy: {
@@ -7,9 +6,6 @@ export const helmet = Helmet({
     },
     dnsPrefetchControl: {
         allow: false
-    },
-    frameguard: {
-        action: 'sameorigin'
     },
     permittedCrossDomainPolicies: false,
     contentSecurityPolicy: false,
