@@ -18,9 +18,8 @@ export default class BotController{
     }
 
     @Get()
-    async showAll(){
-        const bots = this.botService.showAll();
-        return bots;
+    async showAll(@Query("sort") organizar: string,  @Query("search") pesquisa: string, @Query("page") pagina: number, @Query("limit") limit: string /* eu ja expliquei isso na outra classe */){
+        return this.botService.showAll(organizar, pesquisa, pagina, limit);
     }
 
     @Post()

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, MongooseFilterQuery } from "mongoose";
 import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
 import { updateDiscordData } from "src/utils/discord-update-data";
 import { User } from "../users/schemas/User.schema";
@@ -37,8 +37,22 @@ export class BotService {
         return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
     }
 
-    async showAll() {
-        const bots = await this.botModel.find().exec();
+    async showAll(sort: string = "recent", pesquisa: string, pagina: number = 1, limite: string = "18" /* N pergunta pq eh uma string, ele n funcionava se eu colocasse o number */) {
+        console.log(`Sort: ${sort}, Pesquisa: ${pesquisa}, Pagina: ${pagina}, Limite: ${limite}`)
+        let params: any = {};
+        let ordenar: any = {};
+        if(pesquisa){
+            const regex = {$regex: pesquisa, $options: "i"};
+            params.$or = [{username: regex}, {"details.shortDescription": regex}];
+        }
+
+        if(sort == "recent"){
+            ordenar = { "dates.sent": -1 };
+        } else if(sort == "mostVoted"){
+          ordenar = { "votes.current": -1 };  
+        }
+
+        const bots = await this.botModel.find(params).sort(ordenar).limit(parseInt(limite)).skip((pagina-1) * parseInt(limite)).exec();
         let botsFormated: Bot[] = []
         
         for(const bot of bots){
