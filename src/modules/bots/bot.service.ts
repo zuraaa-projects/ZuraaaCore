@@ -36,4 +36,15 @@ export class BotService {
             return
         return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
     }
+
+    async showAll() {
+        const bots = await this.botModel.find().exec();
+        let botsFormated: Bot[] = []
+        
+        for(const bot of bots){
+            botsFormated.push(new Bot(bot, false, false))
+        }
+
+        return botsFormated
+    }
 }
