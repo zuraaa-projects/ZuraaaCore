@@ -1,6 +1,7 @@
-import { Controller, Get, HttpException, HttpStatus, Param } from "@nestjs/common";
-import { Query } from "@nestjs/common/decorators/http/route-params.decorator";
+import { Controller, Get, HttpException, HttpStatus, Param, Post } from "@nestjs/common";
+import { Body, Query } from "@nestjs/common/decorators/http/route-params.decorator";
 import { BotService } from "src/modules/bots/bot.service";
+import CreateBotDto from "src/modules/bots/dtos/created-edited/bot.dto";
 
 @Controller('bots')
 export default class BotController{
@@ -13,6 +14,12 @@ export default class BotController{
         if(!bot)
             throw new HttpException('Bot não encontrado.', HttpStatus.NOT_FOUND)
 
+        return bot
+    }
+
+
+    @Post()
+    async add(@Body() bot: CreateBotDto){
         return bot
     }
 }
