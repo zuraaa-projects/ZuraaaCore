@@ -1,7 +1,9 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { DiscordModule } from "src/extension-modules/discord/discord.module";
+import { BotModule } from "../bots/bot.module";
 import { User, UserSchema } from "./schemas/User.schema";
+import UserController from "./user.controller";
 import { UserService } from "./User.service";
 
 @Module({
@@ -12,11 +14,17 @@ import { UserService } from "./User.service";
                 schema: UserSchema
             }
         ]),
-        DiscordModule
+        DiscordModule,
+        BotModule
     ],
     providers: [
         UserService
     ],
-    exports: [UserService]
+    controllers: [
+        UserController
+    ],
+    exports: [
+        UserService
+    ]
 })
 export class UserModule{}

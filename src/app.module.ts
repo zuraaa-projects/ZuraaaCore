@@ -1,5 +1,5 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from "@nestjs/common";
-import { RouterModule } from "./controllers/router.module";
+import { Module } from "@nestjs/common";
+import { LoaderModule } from "./modules/loader.module";
 import { DatabaseModule } from "./extension-modules/config/database.module";
 import { AuthModule } from "./modules/auth/auth.module";
 
@@ -8,7 +8,7 @@ import { AuthModule } from "./modules/auth/auth.module";
     imports: [
         DatabaseModule,
         AuthModule,
-        RouterModule        
+        LoaderModule        
     ]
 })
 export class AppModule{}
