@@ -1,5 +1,5 @@
 import { Prop, Schema } from "@nestjs/mongoose";
-import { User } from "src/modules/users/schemas/User.schema";
+import { AppLibrary, BotsTags } from "../enums/details.enums";
 
 @Schema()
 export class BotDetails{
@@ -39,7 +39,7 @@ export class BotDetails{
     @Prop({
         required: true
     })
-    tags: TagsType[]
+    tags: BotsTags[]
 
     @Prop({
         required: true
@@ -86,8 +86,3 @@ export class BotDetails{
     })
     customURL: string
 }
-
-
-export type TagsType = 'anime' | 'dashboard' | 'diversao' | 'utilidades' | 'social' | 'jogos' | 'musica' | 'moderacao' | 'economia' | 'fortnite' | 'lol' | 'minecraft' | 'hytale' | 'nfsw' | 'outros'
-
-export type AppLibrary = 'discord.js' | 'discord.py' | 'discordCr' | 'discord.io' | 'eris' | 'RestCord' | 'Discordia' | 'nyx' | 'serenity' | 'discordie' | 'DiscordPHP' | 'Sword' | 'DiscordUnity' | 'litcord' | 'discord-hs' | 'discordrb' | 'Discord.Net' | 'JDA' | 'Javacord' | 'discord-rs' | 'DSharpPlus' | 'dscord' | 'DiscordGo' | 'DisGord' | 'Discord4j' | 'discordnim' | 'Yasmin' | 'disco' | 'AckCord' | 'Bot Designer' | 'DBM' | 'Outro'

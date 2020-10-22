@@ -1,59 +1,44 @@
-import { MaxLength, IsNotEmpty, Length } from 'class-validator'
-import { AppLibrary, TagsType } from "../../schemas/BotDetails.schema"
+import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize } from 'class-validator'
+import { AppLibrary, BotsTags } from '../../enums/details.enums'
 
 export default class DetailsBotDto{
-    @Length(1, 15, {
-        message: '"prefixo" deve ter 1 á 15 caracteres.'
-    })
+    @Length(1, 15)
     prefix!: string
 
-    @Length(1, 6, {
-        message: 'Você deve cadastrar de 1 á 6 "tags"',
+    @ArrayMaxSize(6)
+    @ArrayMinSize(1)
+    @IsEnum(BotsTags, {
         each: true
     })
-    tags!: TagsType[]
+    tags!: BotsTags[]
 
-    @IsNotEmpty({
-        message: '"library" é requerida'
-    })
+    @IsNotEmpty()
+    @IsEnum(AppLibrary)
     library!: AppLibrary
 
 
-    @MaxLength(255, {
-        message: '"customInviteLink" excedeu o limite de caracteres.'
-    })
+    @MaxLength(255)
     customInviteLink!: string
 
-    @Length(3, 300, {
-        message: '"shortDescription" não obedece os limites de tamanho 3-300 caracteres.'
-    })
+    @Length(3, 300)
     shortDescription!: string
 
-    @MaxLength(100000, {
-        message: '"longDescription" é passou de 100000 caracteres.'
-    })
+    @MaxLength(100000)
     longDescription!: string
 
-    @IsNotEmpty({
-        message: '"isHTML" é requerido.'
-    })
+    @IsNotEmpty()
     isHTML!: boolean
     
 
-    @MaxLength(10, {
-        message: '"supportServer" não tem formato valido para um convite discord.'
-    })
+    @MaxLength(10)
     supportServer!: string
 
-    @MaxLength(255, {
-        message: '"website" é maior que 255 caracters.'
-    })
+    @MaxLength(255)
     website!: string
 
 
     @MaxLength(5, {
         each: true,
-        message: '"otherOwners" so pode conter 6 itens.'
     })
     otherOwners!: string[]
     
