@@ -1,8 +1,9 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post } from "@nestjs/common";
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Request } from "@nestjs/common";
 import { Body, Query } from "@nestjs/common/decorators/http/route-params.decorator";
-import { get } from "http";
 import { BotService } from "src/modules/bots/bot.service";
 import CreateBotDto from "src/modules/bots/dtos/created-edited/bot.dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { RequestUserPayload } from "../auth/jwt.payload";
 
 @Controller('bots')
 export default class BotController{
@@ -12,7 +13,7 @@ export default class BotController{
     async show(@Param('id') id: string, @Query('avatarBuffer') showAvatar: boolean){
         const bot =  this.botService.show(id, showAvatar, true)
         if(!bot)
-            throw new HttpException('Bot não encontrado.', HttpStatus.NOT_FOUND)
+            throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
         return bot
     }
@@ -23,7 +24,8 @@ export default class BotController{
     }
 
     @Post()
-    async add(@Body() bot: CreateBotDto){
-        return bot
+    @UseGuards(JwtAuthGuard)
+    async add(@Body() bot: CreateBotDto, @Request() req: Express.Request){
+        return this.botService.add(bot, req.user as RequestUserPayload)
     }
 }

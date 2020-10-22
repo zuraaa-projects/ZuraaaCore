@@ -5,6 +5,7 @@ import DetailsBotDto from './details-bot.dto'
 export default class CreateBotDto{
     @Length(16, 19)
     _id!: string
+    
 
     @IsNotEmpty()
     @ValidateNested()

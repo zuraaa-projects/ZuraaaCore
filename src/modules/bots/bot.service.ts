@@ -3,7 +3,9 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, MongooseFilterQuery } from "mongoose";
 import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
 import { updateDiscordData } from "src/utils/discord-update-data";
+import { RequestUserPayload } from "../auth/jwt.payload";
 import { User } from "../users/schemas/User.schema";
+import CreateBotDto from "./dtos/created-edited/bot.dto";
 import { Bot, BotDocument } from "./schemas/Bot.schema";
 
 @Injectable()
@@ -60,5 +62,15 @@ export class BotService {
         }
 
         return botsFormated
+    }
+
+    async add(bot: CreateBotDto, userPayload: RequestUserPayload){
+        const botElement = new this.botModel(bot)
+        botElement.owner = userPayload.userId
+        const botTrated = await updateDiscordData(botElement, this.discordService)
+        if(!botTrated)
+            throw new Error ('Discord Retornou dados invalidos.')
+        botTrated.save()
+        return new Bot(botElement, false, false)
     }
 }

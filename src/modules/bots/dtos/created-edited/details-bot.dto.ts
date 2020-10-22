@@ -1,4 +1,4 @@
-import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize } from 'class-validator'
+import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize, IsOptional } from 'class-validator'
 import { AppLibrary, BotsTags } from '../../enums/details.enums'
 
 export default class DetailsBotDto{
@@ -18,25 +18,27 @@ export default class DetailsBotDto{
 
 
     @MaxLength(255)
+    @IsOptional()
     customInviteLink!: string
 
     @Length(3, 300)
     shortDescription!: string
 
+    @IsOptional()
     @MaxLength(100000)
     longDescription!: string
 
-    @IsNotEmpty()
     isHTML!: boolean
     
-
+    @IsOptional()
     @MaxLength(10)
     supportServer!: string
 
+    @IsOptional()
     @MaxLength(255)
     website!: string
 
-
+    @IsOptional()
     @MaxLength(5, {
         each: true,
     })

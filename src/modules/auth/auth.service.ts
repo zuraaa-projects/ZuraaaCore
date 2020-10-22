@@ -3,7 +3,7 @@ import { DiscordBotService } from "src/extension-modules/discord/discord-bot.ser
 import { UserService } from "../users/User.service";
 import { JwtService } from '@nestjs/jwt'
 import { User } from "../users/schemas/User.schema";
-import JwtPayload from "./jwt.payload";
+import { JwtPayload } from "./jwt.payload";
 
 @Injectable()
 export class AuthService {
