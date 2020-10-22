@@ -1,18 +1,15 @@
-import { IsNotEmpty, Length, MinLength } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsNotEmpty, Length, ValidateNested } from 'class-validator'
+import DetailsBotDto from './details-bot.dto'
 
 export default class CreateBotDto{
-    @IsNotEmpty({
-        message: '"id" é requerido.',
-    })
     @Length(16, 19, {
-        message: '"id" é muito longa para o padrão id do discord.'
-    })
-    @MinLength(16, {
-        message: '"id" é muito curta para o padrão id do discord.'
+        message: '"id" não segue os padroes do discord.'
     })
     _id!: string
 
-    
-    
+    @ValidateNested()
+    @IsNotEmpty()
+    details!: DetailsBotDto
 
 }
