@@ -1,18 +1,18 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { Injectable } from "@nestjs/common";
 import Axios, { AxiosInstance } from "axios";
+import { discord } from '../../../config.json'
 
 @Injectable()
 export class DiscordBotService{
     private api: AxiosInstance
     private baseUrl = 'https://discord.com/api/v8'
     
-    constructor(private readonly configService: ConfigService){
+    constructor(){
         this.api = Axios.create({
             baseURL: this.baseUrl,
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bot ' + configService.get<string>('DISCORD_BOT_TOKEN')
+                'Authorization': 'Bot ' + discord.bot.token
             }
         })
     }
@@ -23,11 +23,11 @@ export class DiscordBotService{
 
     async getUserLogin(code: string){
         const params = new URLSearchParams()
-        params.append('client_id', this.configService.get<string>('DISCORD_APP_ID')!)
-        params.append('client_secret', this.configService.get<string>('DISCORD_APP_SECRET')!)
+        params.append('client_id', discord.app.id)
+        params.append('client_secret', discord.app.secret)
         params.append('grant_type', 'authorization_code')
-        params.append('scope', this.configService.get<string>('DISCORD_APP_SCOPE')!)
-        params.append('redirect_uri', this.configService.get<string>('DISCORD_APP_REDIRECT_URI')!)
+        params.append('scope', discord.app.scope)
+        params.append('redirect_uri', discord.app.redirect)
         params.append('code', code)
 
         const { data: tokenUser } = await Axios.post('/oauth2/token', params.toString(), {
