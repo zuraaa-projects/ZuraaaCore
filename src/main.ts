@@ -1,11 +1,16 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { env } from 'process';
 import { AppModule } from './app.module';
 import { helmet } from './utils/express.plugins'
+import { env } from 'process'
+import dotenv from 'dotenv'
+
 
 
 async function bootstrap() {
+  dotenv.config()
+
+
   const app = await NestFactory.create(AppModule);
   app.use(helmet)
   app.useGlobalPipes(new ValidationPipe())
