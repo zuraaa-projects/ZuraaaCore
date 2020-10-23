@@ -14,12 +14,7 @@ async function bootstrap() {
   app.use(helmet)
   app.useGlobalPipes(new ValidationPipe())
   app.enableCors()
-  app.setGlobalPrefix(configService.get<string>('SERVER_PREFIX') || '');
-  await app.listen(configService.get<string>('SERVER_PORT')!);
-
-  console.log({
-    port: env.server_port,
-    prefix: env.server_prefix
-  })
+  app.setGlobalPrefix('api');
+  await app.listen(1092);
 }
 bootstrap();
