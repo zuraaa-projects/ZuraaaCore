@@ -13,6 +13,7 @@ export class BotDetails{
         longDescription,
         htmlDescription,
         supportServer,
+        isHTML,
         website,
         otherOwners,
         customURL
@@ -26,6 +27,7 @@ export class BotDetails{
         this.htmlDescription = htmlDescription
         this.supportServer = supportServer
         this.website = website
+        this.isHTML = isHTML
         this.otherOwners = otherOwners
         this.customURL = customURL
     }

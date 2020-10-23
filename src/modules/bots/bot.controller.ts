@@ -7,6 +7,7 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RequestUserPayload } from "../auth/jwt.payload";
 import { Response } from 'express'
 import _ from 'lodash'
+import { User } from "../users/schemas/User.schema";
 
 @Controller('bots')
 export default class BotController{
@@ -33,15 +34,26 @@ export default class BotController{
     }
 
     @Get(':id/shield')
-    async shild(@Param('id') id: string, @Res() res: Response){
+    async shild(@Param('id') id: string, @Res() res: Response, @Query('type') type: string){
         const svgCreator = new SvgCreator()
 
-        const bot = await this.botService.show(id, false, false)
+        const bot = await this.botService.show(id, false, false, true)
 
         if(!bot)
             throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
+        let svg = ''
+        switch(type){
+            case 'tinyOwnerBot':
+                const {username, discriminator} = bot.owner as User
+                svg = svgCreator.tinyOwnerShield(username + '#' + discriminator, bot._id)
+                break
+            default: 
+                svg = svgCreator.tinyUpvoteShild(bot.votes.current, bot._id)
+                break
+        }
+
         
-        return res.set('content-type', 'image/svg+xml').send(svgCreator.tinyUpvoteShild(bot))
+        return res.set('content-type', 'image/svg+xml').send(svg)
     }
 }
