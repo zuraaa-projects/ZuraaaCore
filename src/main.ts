@@ -12,5 +12,10 @@ async function bootstrap() {
   app.enableCors()
   app.setGlobalPrefix(env.server_prefix || '');
   await app.listen(env.server_port!);
+
+  console.log({
+    port: env.server_port,
+    prefix: env.server_prefix
+  })
 }
 bootstrap();
