@@ -39,7 +39,7 @@ export default class BotController{
         const bot = await this.botService.show(id, false, false)
 
         if(!bot)
-            throw new HttpException('Not found', HttpStatus.NOT_FOUND)
+            throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
         
         return res.set('content-type', 'image/svg+xml').send(svgCreator.tinyUpvoteShild(bot))

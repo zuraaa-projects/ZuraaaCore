@@ -8,7 +8,7 @@ export default class AuthController{
     @Post('user')
     async login(@Body('code') code: string){
         const userLogged = await this.authService.validateUser(code).catch(() => {
-            throw new HttpException('\'code\' se encontra invalido ou não foi definido.', HttpStatus.BAD_REQUEST)
+            throw new HttpException('\'code\' is invalid.', HttpStatus.BAD_REQUEST)
         })
 
 

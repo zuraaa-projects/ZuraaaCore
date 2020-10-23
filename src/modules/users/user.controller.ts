@@ -11,7 +11,7 @@ export default class UserController {
         const user = await this.userService.show(id, avatarBuffer)
 
         if(!user || _.isEmpty(user)) 
-            throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
+            throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
         
         return user
     }
@@ -21,7 +21,7 @@ export default class UserController {
         const user = await this.userService.show(id, false)
             
         if(!user || _.isEmpty(user))
-            throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
+            throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
         
         return this.botService.getBotsByOwner(user)
     }
