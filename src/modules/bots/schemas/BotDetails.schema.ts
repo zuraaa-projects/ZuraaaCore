@@ -69,6 +69,11 @@ export class BotDetails{
     htmlDescription: string
 
     @Prop({
+        default: false
+    })
+    isHTML!: boolean
+
+    @Prop({
         maxlength: 10
     })
     supportServer: string
