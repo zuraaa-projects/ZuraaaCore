@@ -1,6 +1,6 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Query, Res } from "@nestjs/common";
 import { BotService } from "src/modules/bots/bot.service";
-import { UserService } from "src/modules/users/User.service";
+import { UserService } from "src/modules/users/user.service";
 
 @Controller('users')
 export default class UserController {

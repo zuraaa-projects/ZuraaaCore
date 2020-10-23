@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { DiscordModule } from "src/extension-modules/discord/discord.module";
-import { UserModule } from "../users/User.module";
+import { UserModule } from "../users/user.module";
 import AuthController from "./auth.controller";
 import { JwtModule } from '@nestjs/jwt'
 import { env } from "process";

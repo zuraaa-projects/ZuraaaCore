@@ -4,7 +4,7 @@ import { DiscordModule } from "src/extension-modules/discord/discord.module";
 import { BotModule } from "../bots/bot.module";
 import { User, UserSchema } from "./schemas/User.schema";
 import UserController from "./user.controller";
-import { UserService } from "./User.service";
+import { UserService } from "./user.service";
 
 @Module({
     imports: [
