@@ -10,7 +10,7 @@ export default class UserController {
     async show(@Param('id') id: string, @Query('avatarBuffer') avatarBuffer: boolean){
         const user = await this.userService.show(id, avatarBuffer)
 
-        if(!user && _.isEmpty(user)) 
+        if(!user || _.isEmpty(user)) 
             throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
         
         return user
@@ -20,7 +20,7 @@ export default class UserController {
     async getBots(@Param('id') id: string){
         const user = await this.userService.show(id, false)
             
-        if(!user)
+        if(!user || _.isEmpty(user))
             throw new HttpException('Usuario não encontrado.', HttpStatus.NOT_FOUND)
         
         return this.botService.getBotsByOwner(user)
