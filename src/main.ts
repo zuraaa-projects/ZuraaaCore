@@ -3,20 +3,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { helmet } from './utils/express.plugins'
 import { env } from 'process'
-import dotenv from 'dotenv'
+import { ConfigService } from '@nestjs/config';
 
 
 
 async function bootstrap() {
-  dotenv.config()
-
-
   const app = await NestFactory.create(AppModule);
+
+  const configService: ConfigService = app.get(ConfigService)
   app.use(helmet)
   app.useGlobalPipes(new ValidationPipe())
   app.enableCors()
-  app.setGlobalPrefix(env.server_prefix || '');
-  await app.listen(env.server_port!);
+  app.setGlobalPrefix(configService.get<string>('SERVER_PREFIX') || '');
+  await app.listen(configService.get<string>('SERVER_PORT')!);
 
   console.log({
     port: env.server_port,
