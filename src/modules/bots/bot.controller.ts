@@ -6,6 +6,7 @@ import { SvgCreator } from "src/utils/svg-creator";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RequestUserPayload } from "../auth/jwt.payload";
 import { Response } from 'express'
+import _ from 'lodash'
 
 @Controller('bots')
 export default class BotController{
@@ -14,7 +15,7 @@ export default class BotController{
     @Get(':id')
     async show(@Param('id') id: string, @Query('avatarBuffer') showAvatar: boolean){
         const bot =  this.botService.show(id, showAvatar, true)
-        if(!bot)
+        if(!bot && _.isEmpty(bot))
             throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
         return bot
