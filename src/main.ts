@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { env } from 'process';
 import { AppModule } from './app.module';
 import { helmet } from './utils/express.plugins'
 
@@ -9,7 +10,7 @@ async function bootstrap() {
   app.use(helmet)
   app.useGlobalPipes(new ValidationPipe())
   app.enableCors()
-  app.setGlobalPrefix('api');
-  await app.listen(1092);
+  app.setGlobalPrefix(env.server_prefix || '');
+  await app.listen(env.server_port!);
 }
 bootstrap();

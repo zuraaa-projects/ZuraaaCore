@@ -27,7 +27,10 @@ class SvgCreator{
         const a = this._svg.append('a')
             .attr('xlink:href', 'https://zuraaa.com/bots/' + bot._id + '/votar')
             
-        a.append('image')
+
+        const g_text = a.append('g')
+
+        g_text.append('image')
             .attr('x', 43)
             .attr('width', 65)
             .attr('heigth', 20)
@@ -53,12 +56,13 @@ class SvgCreator{
             .attr('xlink:href', 'data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAICAYAAACRbl3VAAABKUlEQVQ4jbVU0VHDMBRTcyxQRugKWSEdQB9hBDoCjEBHoCO0HxqAjEBXYIRmBDj15GB6pHxw1Y/j954t+VnOQtIbAJBcI5DUAngHsCG5wxVIegLQ1ev/gwaACTtJq2qfHsD4l5hb4I7kQdIYEdtK0CRG0iuAx4r/meS2jkv6BLAmOVypXwLwjbRV7p7kmPVDk+Cu2rgD4G4dMm+TM9nC1wjgxZuT3GTt4FzEzNZHSBsRi9SMsYzXr4sgk68ipg/BMbllxo+LcYnfMVtvweHa23uZ/0ATdSY/5mR96c4tQPKhPABJp3RuQlN9HyIGF4LOLc011mOJ17Gr9SaXVLxVPHr2kz3kF+97PCNKTy6MNybMmTQ5b7gPsU/vRzJnate4tpja1vj+XQD4AkdSl+Tehc1KAAAAAElFTkSuQmCC')
 
 
-        a.append('text')
+        g_text.append('text')
             .text(bot.votes.current)
-            .attr('x', 65)
-            .attr('y', 14)
+            .attr('x', '66%')
+            .attr('y', '71%')
             .attr('fill', 'white')
             .attr('font-size', '0.7em')
+            .attr('text-anchor', 'middle')
 
 
         a.append('text')
