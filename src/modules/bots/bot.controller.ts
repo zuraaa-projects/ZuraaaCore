@@ -31,7 +31,7 @@ export default class BotController{
         return this.botService.add(bot, req.user as RequestUserPayload)
     }
 
-    @Get(':id/shild')
+    @Get(':id/shield')
     async shild(@Param('id') id: string, @Res() res: Response){
         const svgCreator = new SvgCreator()
 
