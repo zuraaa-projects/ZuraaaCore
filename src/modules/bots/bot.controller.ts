@@ -15,7 +15,8 @@ export default class BotController{
 
     @Get(':id')
     async show(@Param('id') id: string, @Query('avatarBuffer') showAvatar: boolean){
-        const bot =  this.botService.show(id, showAvatar, true)
+        const bot =  await this.botService.show(id, showAvatar, true)
+        console.log(bot)
         if(!bot || _.isEmpty(bot))
             throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
