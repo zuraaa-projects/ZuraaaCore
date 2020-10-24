@@ -8,6 +8,7 @@ import { RequestUserPayload } from "../auth/jwt.payload";
 import { Response } from 'express'
 import _ from 'lodash'
 import { User } from "../users/schemas/User.schema";
+import { Bot } from "./schemas/Bot.schema";
 
 @Controller('bots')
 export default class BotController{
@@ -19,18 +20,18 @@ export default class BotController{
         if(!bot || _.isEmpty(bot))
             throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
 
-        return bot
+        return new Bot(bot, false, true)
     }
 
     @Get()
     async showAll(@Query("sort") organizar: string,  @Query("search") pesquisa: string, @Query("page") pagina: number, @Query("limit") limit: string /* eu ja expliquei isso na outra classe */){
-        return this.botService.showAll(organizar, pesquisa, pagina, limit);
+        //return this.botService.showAll(organizar, pesquisa, pagina, limit);
     }
 
     @Post()
     @UseGuards(JwtAuthGuard)
     async add(@Body() bot: CreateBotDto, @Request() req: Express.Request){
-        return this.botService.add(bot, req.user as RequestUserPayload)
+        //return this.botService.add(bot, req.user as RequestUserPayload)
     }
 
     @Get(':id/shield')
