@@ -45,8 +45,8 @@ export default class BotController{
         let svg = ''
         switch(type){
             case 'tinyOwnerBot':
-                const {username, discriminator} = bot.owner as User
-                svg = svgCreator.tinyOwnerShield(username + '#' + discriminator, bot._id)
+                const {username, discriminator, _id} = bot.owner as User
+                svg = svgCreator.tinyOwnerShield(username + '#' + discriminator, _id)
                 break
             default: 
                 svg = svgCreator.tinyUpvoteShild(bot.votes.current, bot._id)

@@ -86,7 +86,7 @@ class SvgCreator{
                     .html('@import url(\'http://fonts.googleapis.com/css?family=Monda\'); * {font-family: \'Monda\', sans-serif;}')
 
         const a = this._svg.append('a')
-            .attr('xlink:href', 'https://zuraaa.com/bots/' + id)
+            .attr('xlink:href', 'https://zuraaa.com/user/' + id)
         
         const g_text = a.append('g')
 
