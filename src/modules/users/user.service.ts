@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from "mongoose";
 import { DiscordBotService, DiscordUser } from "src/extension-modules/discord/discord-bot.service";
 import { updateDiscordData } from "src/utils/discord-update-data";
+import UserDto from "./dtos/edit-user/user.dto";
 import { User, UserDocument } from "./schemas/User.schema";
 
 @Injectable()
@@ -31,5 +32,16 @@ export class UserService{
         })
 
         return new User(await updateDiscordData(userData, user), false)
+    }
+
+    async update(user: UserDto, id: string, enableAvatar = false){
+        const userDb = await this.userModel.findById(id).exec()
+        if(!userDb)
+            return
+        const discordUserDb = await updateDiscordData(userDb, this.discordService)
+        if(!discordUserDb)
+            return
+        discordUserDb.details.description = user.bio
+        return new  User(await discordUserDb.save(), enableAvatar)
     }
 }
