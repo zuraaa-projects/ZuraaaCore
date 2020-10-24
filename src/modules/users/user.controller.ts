@@ -9,8 +9,25 @@ import { RequestUserPayload } from "../auth/jwt.payload";
 @Controller('users')
 export default class UserController {
     constructor(private readonly userService: UserService, private readonly botService: BotService){}
+
+    @Get('@me')
+    @UseGuards(JwtAuthGuard)
+    async showMe(@Req() req: Express.Request, @Query('avatarBuffer') avatarBuffer: boolean){
+        const { userId } = req.user as RequestUserPayload
+
+        const returnData =  await this.userService.show(userId, avatarBuffer)
+
+        if(!returnData || _.isEmpty(returnData))
+            throw new HttpException('Could not validate the User or Service Discord is unstable', HttpStatus.INTERNAL_SERVER_ERROR)
+        
+        return returnData
+    }
+
+
     @Get(':id')
     async show(@Param('id') id: string, @Query('avatarBuffer') avatarBuffer: boolean){
+        
+
         const user = await this.userService.show(id, avatarBuffer)
 
         if(!user || _.isEmpty(user)) 
