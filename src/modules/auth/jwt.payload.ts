@@ -1,9 +1,16 @@
 export interface JwtPayload{
-    username: string,
+    role: RoleLevel,
     sub: string
 }
 
 export interface RequestUserPayload{
     userId: string
-    username: string
+    role: RoleLevel
+}
+
+export enum RoleLevel{
+    user,
+    checker,
+    adm,
+    owner
 }

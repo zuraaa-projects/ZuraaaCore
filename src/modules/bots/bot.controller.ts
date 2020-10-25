@@ -1,11 +1,12 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res } from "@nestjs/common";
-import { Query } from "@nestjs/common/decorators/http/route-params.decorator";
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete } from "@nestjs/common";
+import { Query, Req } from "@nestjs/common/decorators/http/route-params.decorator";
 import { BotService } from "src/modules/bots/bot.service";
 import { SvgCreator } from "src/utils/svg-creator";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { Response } from 'express'
 import _ from 'lodash'
 import { User } from "../users/schemas/User.schema";
+import { RequestUserPayload, RoleLevel } from "../auth/jwt.payload";
 
 @Controller('bots')
 export default class BotController{
@@ -16,8 +17,19 @@ export default class BotController{
         const bot =  await this.botService.show(id, showAvatar, true)
         if(!bot || _.isEmpty(bot))
             throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
-        console.log(bot)
         return bot
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    async remove(@Param('id') id: string, @Req() req: Express.Request){
+        const { role, userId } = req.user as RequestUserPayload
+        const bot = await this.botService.show(id, false)
+        console.log((bot && bot.owner == userId))
+        if(role >= RoleLevel.adm || (bot && bot.owner == userId))
+            return this.botService.delete(id)
+        else
+            return 'sem perm irmao'
     }
 
     @Get()

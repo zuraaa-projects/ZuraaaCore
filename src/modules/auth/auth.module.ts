@@ -4,11 +4,9 @@ import { DiscordModule } from "src/extension-modules/discord/discord.module";
 import { UserModule } from "../users/user.module";
 import AuthController from "./auth.controller";
 import { JwtModule } from '@nestjs/jwt'
-import { env } from "process";
+import { jwt } from '../../../config.json'
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./jwt.strategy";
-
-const secret = env.jwt_secret
 
 
 @Module({
@@ -17,7 +15,7 @@ const secret = env.jwt_secret
         UserModule,
         PassportModule,
         JwtModule.register({
-            secret,
+            secret: jwt.secret,
             signOptions: {
                 expiresIn: '604800s'
             }

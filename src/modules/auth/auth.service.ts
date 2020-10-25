@@ -3,7 +3,7 @@ import { DiscordBotService } from "src/extension-modules/discord/discord-bot.ser
 import { UserService } from "../users/user.service";
 import { JwtService } from '@nestjs/jwt'
 import { User } from "../users/schemas/User.schema";
-import { JwtPayload } from "./jwt.payload";
+import { JwtPayload, RoleLevel } from "./jwt.payload";
 
 @Injectable()
 export class AuthService {
@@ -24,7 +24,7 @@ export class AuthService {
     async login(user: User){
         return {
             access_token: this.jwtService.sign({
-                username: user.username,
+                role: user.details.role,
                 sub: user._id
             } as JwtPayload)
         }

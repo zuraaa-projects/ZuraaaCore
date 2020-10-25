@@ -81,4 +81,10 @@ export class BotService {
         botTrated.save()
         return new Bot(botElement, false, false)
     }
+
+    async delete(id: string){
+        return this.botModel.deleteOne({
+            _id: id
+        })
+    }
 }
