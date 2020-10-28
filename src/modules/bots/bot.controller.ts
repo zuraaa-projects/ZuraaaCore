@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete } from "@nestjs/common";
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header } from "@nestjs/common";
 import { Query, Req } from "@nestjs/common/decorators/http/route-params.decorator";
 import { BotService } from "src/modules/bots/bot.service";
 import { SvgCreator } from "src/utils/svg-creator";
@@ -43,7 +43,9 @@ export default class BotController{
         //return this.botService.add(bot, req.user as RequestUserPayload)
     }
 
+    
     @Get(':id/shield')
+    @Header('Cache-Control', 'none')
     async shild(@Param('id') id: string, @Res() res: Response, @Query('type') type: string){
         const svgCreator = new SvgCreator()
 
