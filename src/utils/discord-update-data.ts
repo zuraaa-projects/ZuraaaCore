@@ -13,17 +13,20 @@ export async function updateDiscordData<Doc extends Document>(doc: Doc & BaseDis
         doc.username = discordUser.username 
         doc.discriminator = discordUser.discriminator
 
-        const avatarUrl = DiscordUtils.getImageUrl(discordUser)
-        const response = await Axios.get(avatarUrl, {
-            responseType: 'arraybuffer'
-        })
+        if(discordUser.avatar != doc.avatar || !(doc.avatarBuffer && doc.avatarBuffer.contentType)){
+            
+            const avatarUrl = DiscordUtils.getImageUrl(discordUser)
+            const response = await Axios.get(avatarUrl, {
+                responseType: 'arraybuffer'
+            })
 
-        doc.avatarBuffer = {
-            contentType: response.headers['content-type'],
-            data: Buffer.from(response.data)
+            doc.avatarBuffer = {
+                contentType: response.headers['content-type'],
+                data: Buffer.from(response.data)
+            }
+
+            doc.avatar = discordUser.avatar
         }
-
-        doc.avatar = discordUser.avatar
 
         if(!discordUser)
             return
