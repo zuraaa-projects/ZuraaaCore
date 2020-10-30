@@ -12,7 +12,7 @@ export async function updateDiscordData<Doc extends Document>(doc: Doc & BaseDis
         
         doc.username = discordUser.username 
         doc.discriminator = discordUser.discriminator
-
+        /*
         if(discordUser.avatar != doc.avatar || !(doc.avatarBuffer && doc.avatarBuffer.contentType)){
             
             const avatarUrl = DiscordUtils.getImageUrl(discordUser)
@@ -26,7 +26,7 @@ export async function updateDiscordData<Doc extends Document>(doc: Doc & BaseDis
             }
 
             doc.avatar = discordUser.avatar
-        }
+        }*/
 
         if(!discordUser)
             return
