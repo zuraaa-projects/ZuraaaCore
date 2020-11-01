@@ -44,4 +44,8 @@ export class UserService{
         discordUserDb.details.description = user.bio
         return new  User(await discordUserDb.save(), enableAvatar)
     }
+
+    async findById(id: string){
+        return new User(await this.userModel.findById(id).exec(), false)
+    }
 }
