@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
 import { UserService } from "../users/user.service";
 import { JwtService } from '@nestjs/jwt'
@@ -20,6 +20,15 @@ export class AuthService {
         return userDb
     }
 
+
+    async getUser(id: string){
+        const userDb = await this.userService.show(id, false)
+
+        if(!userDb)
+            throw new HttpException('User undefined', HttpStatus.BAD_REQUEST)
+
+        return userDb
+    }
 
     async login(user: User){
         return {
