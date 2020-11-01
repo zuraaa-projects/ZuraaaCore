@@ -25,11 +25,12 @@ export default class BotController{
     async remove(@Param('id') id: string, @Req() req: Express.Request){
         const { role, userId } = req.user as RequestUserPayload
         const bot = await this.botService.show(id, false)
-        console.log((bot && bot.owner == userId))
         if(role >= RoleLevel.adm || (bot && bot.owner == userId))
-            return this.botService.delete(id)
+            return {
+                deleted: await this.botService.delete(id)
+            }
         else
-            return 'sem perm irmao'
+            throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
     }
 
     @Get()

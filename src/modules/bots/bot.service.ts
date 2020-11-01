@@ -83,8 +83,10 @@ export class BotService {
     }
 
     async delete(id: string){
-        return this.botModel.deleteOne({
+        const data = await this.botModel.deleteOne({
             _id: id
-        })
+        }).exec()
+
+        return (data.n && data.n > 0) ? true : false
     }
 }
