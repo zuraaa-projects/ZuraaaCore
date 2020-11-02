@@ -34,8 +34,11 @@ export default class BotController{
     }
 
     @Get()
-    async showAll( /* eu ja expliquei isso na outra classe */){
-        //return this.botService.showAll(organizar, pesquisa, pagina, limit);
+    async showAll(@Query('type') type: string){
+        if(type === 'count')
+            return {
+                bots_count: await this.botService.count()
+            }
     }
 
     @Post()

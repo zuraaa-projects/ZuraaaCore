@@ -34,6 +34,10 @@ export class BotService {
         return botsFormated
     }
 
+    async count(){
+        return this.botModel.countDocuments()
+    }
+
     async show(id: string, avatarBuffer = false, voteLog = false, ownerData = false){
         let query  = this.botModel.findById(id)
         if(ownerData)
