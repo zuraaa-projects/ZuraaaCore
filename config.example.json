@@ -1,0 +1,29 @@
+{
+    "mongo": {
+        "uri": "url do seu mongodb"
+    },
+
+    "discord": {
+        "app": {
+            "id": "id da sua aplicação discord",
+            "secret": "secret aplicação discord",
+            "scope": "identify",
+            "redirect": "callback registrado em sua aplicação discord"
+        },
+        "bot": {
+            "token": "token do bot discord"
+        }
+    },
+
+    "jwt": {
+        "secret": "secret usado para criptografar os tokens jwt (recomendo no min 128 caracteres)",
+        "authorized_clients": [
+            "identificação dos seus clientes oficiais (tipo bot, site, etc) para que os mesmos consigam acessar /auth/user"
+        ]
+    },
+
+    "server": {
+        "port": 3000,
+        "prefix": "api"
+    }
+}
