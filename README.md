@@ -1,6 +1,6 @@
 # ZuraaaCore
 
-Principal api e controle de todo o site Zuraaa (WIP) [Zuraaa](https://github.com/zuraaa-projects/Zuraaa.com)
+Principal api e controle de todo o site [Zuraaa](https://github.com/zuraaa-projects/Zuraaa.com) (WIP)
 
 
 ## Como usar:
