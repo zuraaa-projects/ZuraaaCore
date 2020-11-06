@@ -49,7 +49,7 @@ export default class BotController{
 
     
     @Get(':id/shield')
-    @Header('Cache-Control', 'none')
+    @Header('Cache-Control', 'no-cache')
     async shild(@Param('id') id: string, @Res() res: Response, @Query('type') type: string){
         const svgCreator = new SvgCreator()
 
