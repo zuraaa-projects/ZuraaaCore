@@ -93,4 +93,11 @@ export class BotService {
 
         return (data.n && data.n > 0) ? true : false
     }
+
+    async resetVotes(){
+        return this.botModel.updateMany({}, {
+            "votes.current": 0,
+            "votes.voteslog": []
+        }).exec();        
+    }
 }

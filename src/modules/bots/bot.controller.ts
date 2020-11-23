@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header } from "@nestjs/common";
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Put } from "@nestjs/common";
 import { Query, Req } from "@nestjs/common/decorators/http/route-params.decorator";
 import { BotService } from "src/modules/bots/bot.service";
 import { SvgCreator } from "src/utils/svg-creator";
@@ -31,6 +31,19 @@ export default class BotController{
             }
         else
             throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
+    }
+
+    @Put('')
+    @UseGuards(JwtAuthGuard)
+    async updateAllBots(@Query('type') type: string, @Req() req: Express.Request){
+        const { role } = req.user as RequestUserPayload
+        if(role == RoleLevel.owner){
+            if(type == "resetVotes"){
+                return await this.botService.resetVotes();
+            }
+        }else{
+            throw new HttpException('You do not have sufficient permission to use this endpoint.', HttpStatus.UNAUTHORIZED)
+        }
     }
 
     @Get()
