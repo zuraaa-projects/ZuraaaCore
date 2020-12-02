@@ -51,7 +51,8 @@ export class BotService {
 
     async showAll(sort: string = "recent", pesquisa: string, pagina: number = 1, limite: string = "18" /* N pergunta pq eh uma string, ele n funcionava se eu colocasse o number */) {
         console.log(`Sort: ${sort}, Pesquisa: ${pesquisa}, Pagina: ${pagina}, Limite: ${limite}`)
-        let params: any = {};
+        //O desenvolvedor tava doidão
+        let params : any = {};
         let ordenar: any = {};
         if(pesquisa){
             const regex = {$regex: pesquisa, $options: "i"};
@@ -70,7 +71,7 @@ export class BotService {
         for(const bot of bots){
             botsFormated.push(new Bot(bot, false, false))
         }
-
+        //Eh serio tava doidão
         return botsFormated
     }
 
