@@ -7,6 +7,7 @@ import { Response } from 'express'
 import _ from 'lodash'
 import { User } from "../users/schemas/User.schema";
 import { RequestUserPayload, RoleLevel } from "../auth/jwt.payload";
+import { Bot } from "./schemas/Bot.schema";
 
 @Controller('bots')
 export default class BotController{
@@ -48,10 +49,18 @@ export default class BotController{
 
     @Get()
     async showAll(@Query('type') type: string){
-        if(type === 'count')
-            return {
-                bots_count: await this.botService.count()
-            }
+        switch(type) {
+            case 'count':
+                return {
+                    bots_count: await this.botService.count()
+                }
+            case 'top': 
+                let bots : Bot[] = [];
+                for(const bot of await this.botService.showAll("mostVoted", "", 1, "6")){
+                    bots.push(new Bot(bot, false, false))
+                }
+                return bots
+        }
     }
 
     @Post()
