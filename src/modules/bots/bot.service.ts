@@ -50,7 +50,6 @@ export class BotService {
     }
 
     async showAll(sort: string = "recent", pesquisa: string, pagina: number = 1, limite: string = "18" /* N pergunta pq eh uma string, ele n funcionava se eu colocasse o number */) {
-        console.log(`Sort: ${sort}, Pesquisa: ${pesquisa}, Pagina: ${pagina}, Limite: ${limite}`)
         //O desenvolvedor tava doidão
         let params : any = {};
         let ordenar: any = {};
