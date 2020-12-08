@@ -2,6 +2,10 @@
 
 Principal api e controle de todo o site [Zuraaa](https://github.com/zuraaa-projects/Zuraaa.com) (WIP)
 
+## Estilo de código
+
+[![js-standard-style](https://cdn.rawgit.com/standard/standard/master/badge.svg)](http://standardjs.com)
+
 ## Como usar
 
 - Primeiro clone o repositório:
