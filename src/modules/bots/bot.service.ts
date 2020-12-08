@@ -1,103 +1,99 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
-import { updateDiscordData } from "src/utils/discord-update-data";
-import { RequestUserPayload } from "../auth/jwt.payload";
-import { User } from "../users/schemas/User.schema";
-import CreateBotDto from "./dtos/created-edited/bot.dto";
-import { Bot, BotDocument } from "./schemas/Bot.schema";
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
+import { Model, FilterQuery } from 'mongoose'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import { updateDiscordData } from 'src/utils/discord-update-data'
+import { RequestUserPayload } from '../auth/jwt.payload'
+import { User } from '../users/schemas/User.schema'
+import CreateBotDto from './dtos/created-edited/bot.dto'
+import { Bot, BotDocument } from './schemas/Bot.schema'
 import md from 'markdown-it'
 import xss from 'xss'
 
 @Injectable()
 export class BotService {
-    constructor(@InjectModel(Bot.name) private readonly botModel: Model<BotDocument>, private readonly discordService: DiscordBotService){}
+  constructor (@InjectModel(Bot.name) private readonly BotModel: Model<BotDocument>, private readonly discordService: DiscordBotService) {}
 
-    async getBotsByOwner(owner: User){
-        const bots = await this.botModel.find({
-            $or: [
-                {
-                    owner: owner._id
-                },
-                {
-                    'details.otherOwners': owner._id
-                }
-            ]
-        }).exec()
-        let botsFormated: Bot[] = []
-        
-        for(const bot of bots){
-            botsFormated.push(new Bot(bot, false, false))
+  async getBotsByOwner (owner: User): Promise<Bot[]> {
+    const bots = await this.BotModel.find({
+      $or: [
+        {
+          owner: owner._id
+        },
+        {
+          'details.otherOwners': owner._id
         }
+      ]
+    }).exec()
+    const botsFormated: Bot[] = []
 
-        return botsFormated
+    for (const bot of bots) {
+      botsFormated.push(new Bot(bot, false, false))
     }
 
-    async count(){
-        return this.botModel.countDocuments()
+    return botsFormated
+  }
+
+  async count (): Promise<number> {
+    return await this.BotModel.countDocuments()
+  }
+
+  async show (id: string, avatarBuffer = false, voteLog = false, ownerData = false): Promise<Bot | undefined> {
+    let query = this.BotModel.findById(id)
+    if (ownerData) { query = query.populate('owner') }
+    const result = await query.exec()
+
+    if (result === null) { return }
+    return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
+  }
+
+  async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18): Promise<Bot[]> {
+    const params: FilterQuery<unknown> = {}
+    let ordenar: Record<string, unknown> = {}
+    if (pesquisa.length > 0) {
+      const regex = { $regex: pesquisa, $options: 'i' }
+      params.$or = [{ username: regex }, { 'details.shortDescription': regex }]
     }
 
-    async show(id: string, avatarBuffer = false, voteLog = false, ownerData = false){
-        let query  = this.botModel.findById(id)
-        if(ownerData)
-            query = query.populate('owner')
-        const result = await query.exec()
-
-        if(!result)
-            return
-        return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
+    if (sort === 'recent') {
+      ordenar = { 'dates.sent': -1 }
+    } else if (sort === 'mostVoted') {
+      ordenar = { 'votes.current': -1 }
     }
 
-    async showAll(sort: string = "recent", pesquisa: string, pagina: number = 1, limite: string = "18" /* N pergunta pq eh uma string, ele n funcionava se eu colocasse o number */) {
-        //O desenvolvedor tava doidão
-        let params : any = {};
-        let ordenar: any = {};
-        if(pesquisa){
-            const regex = {$regex: pesquisa, $options: "i"};
-            params.$or = [{username: regex}, {"details.shortDescription": regex}];
-        }
+    const bots = await this.BotModel.find(params).sort(ordenar).limit(limite).skip((pagina - 1) * limite).exec()
+    const botsFormated: Bot[] = []
 
-        if(sort == "recent"){
-            ordenar = { "dates.sent": -1 };
-        } else if(sort == "mostVoted"){
-          ordenar = { "votes.current": -1 };  
-        }
-
-        const bots = await this.botModel.find(params).sort(ordenar).limit(parseInt(limite)).skip((pagina-1) * parseInt(limite)).exec();
-        let botsFormated: Bot[] = []
-        
-        for(const bot of bots){
-            botsFormated.push(new Bot(bot, false, false))
-        }
-        //Eh serio tava doidão
-        return botsFormated
+    for (const bot of bots) {
+      botsFormated.push(new Bot(bot, false, false))
     }
+    return botsFormated
+  }
 
-    async add(bot: CreateBotDto, userPayload: RequestUserPayload){
-        const botElement = new this.botModel(bot)
-        botElement.owner = userPayload.userId
-        const { isHTML, longDescription } = bot.details
-        botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
-        const botTrated = await updateDiscordData(botElement, this.discordService)
-        if(!botTrated)
-            throw new Error ('Discord Retornou dados invalidos.')
-        botTrated.save()
-        return new Bot(botElement, false, false)
-    }
+  async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot> {
+    const botElement = new this.BotModel(bot)
+    botElement.owner = userPayload.userId
+    const { isHTML, longDescription } = bot.details
+    botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
+    const botTrated = await updateDiscordData(botElement, this.discordService)
+    if (botTrated === undefined) { throw new Error('Discord Retornou dados invalidos.') }
+    await botTrated.save()
+    return new Bot(botElement, false, false)
+  }
 
-    async delete(id: string){
-        const data = await this.botModel.deleteOne({
-            _id: id
-        }).exec()
+  async delete (id: string): Promise<boolean> {
+    const deleted = await this.BotModel.deleteOne({
+      _id: id
+    }).exec()
 
-        return (data.n && data.n > 0) ? true : false
-    }
+    if (deleted.n === undefined || isNaN(deleted.n)) { return false }
+    return true
+  }
 
-    async resetVotes(){
-        return this.botModel.updateMany({}, {
-            "votes.current": 0,
-            "votes.voteslog": []
-        }).exec();        
-    }
+  async resetVotes (): Promise<void> {
+    return await this.BotModel.updateMany({}, {
+      'votes.current': 0,
+      'votes.voteslog': []
+    }).exec()
+  }
 }

@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { DiscordBotService } from "src/extension-modules/discord/discord-bot.service";
+import { Module } from '@nestjs/common'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 
 @Module({
-    providers: [DiscordBotService],
-    exports: [DiscordBotService]
+  providers: [DiscordBotService],
+  exports: [DiscordBotService]
 })
-export class DiscordModule{}
+export class DiscordModule {}

@@ -1,15 +1,15 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema } from '@nestjs/mongoose'
 
 @Schema()
-export default class AvatarBuffer{
-    @Prop({
-        required: true
-    })
-    data!: Buffer
+export default class AvatarBuffer {
+  @Prop({
+    required: true
+  })
+  data!: Buffer
 
-    @Prop({
-        maxlength: 255,
-        required: true
-    })
-    contentType!: string
+  @Prop({
+    maxlength: 255,
+    required: true
+  })
+  contentType!: string
 }

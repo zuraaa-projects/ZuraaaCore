@@ -1,57 +1,59 @@
-import { Prop, Schema, SchemaFactory, } from '@nestjs/mongoose'
+// ! TEMPORÁRIO
+// TODO: Arranjar uma forma de não precisar desse disable
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
 import AvatarBuffer from '../../AvatarBuffer.schema'
 import UserDate from './UserDate.schema'
 import UserDetails from './UserDetails.schema'
 
 @Schema({
-    collection: 'users'
+  collection: 'users'
 })
-export class User{
-    constructor({
-        _id,
-        username,
-        discriminator,
-        avatar,
-        avatarBuffer,
-        dates,
-        details
-    }: any, enableAvatar: boolean){
-        this._id = _id
-        this.username = username
-        this.discriminator = discriminator
-        this.avatar = avatar
-        this.avatarBuffer = (enableAvatar) ? avatarBuffer : undefined
-        this.dates = dates
-        this.details = new UserDetails(details)
-    }
+export class User {
+  constructor ({
+    _id,
+    username,
+    discriminator,
+    avatar,
+    avatarBuffer,
+    dates,
+    details
+  }: any, enableAvatar: boolean) {
+    this._id = _id
+    this.username = username
+    this.discriminator = discriminator
+    this.avatar = avatar
+    this.avatarBuffer = (enableAvatar) ? avatarBuffer : undefined
+    this.dates = dates
+    this.details = new UserDetails(details)
+  }
 
+  @Prop()
+  _id: string
 
-    @Prop()
-    _id: string
+  @Prop({
+    required: true
+  })
+  username: string
 
-    @Prop({
-        required: true
-    })
-    username: string
+  @Prop({
+    required: true
+  })
+  discriminator: string
 
-    @Prop({
-        required: true
-    })
-    discriminator: string
+  @Prop()
+  avatar: string
 
-    @Prop()
-    avatar: string
+  @Prop(AvatarBuffer)
+  avatarBuffer: AvatarBuffer
 
-    @Prop(AvatarBuffer)
-    avatarBuffer: AvatarBuffer
+  @Prop(UserDate)
+  dates: UserDate
 
-    @Prop(UserDate)
-    dates: UserDate
-    
-
-    @Prop(UserDetails)
-    details: UserDetails
+  @Prop(UserDetails)
+  details: UserDetails
 }
 
 export type UserDocument = User & Document

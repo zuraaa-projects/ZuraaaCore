@@ -1,51 +1,47 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from "mongoose";
-import { DiscordBotService, DiscordUser } from "src/extension-modules/discord/discord-bot.service";
-import { updateDiscordData } from "src/utils/discord-update-data";
-import UserDto from "./dtos/edit-user/user.dto";
-import { User, UserDocument } from "./schemas/User.schema";
+import { Model } from 'mongoose'
+import { DiscordBotService, DiscordUser } from 'src/extension-modules/discord/discord-bot.service'
+import { updateDiscordData } from 'src/utils/discord-update-data'
+import UserDto from './dtos/edit-user/user.dto'
+import { User, UserDocument } from './schemas/User.schema'
 
 @Injectable()
-export class UserService{
-    constructor (@InjectModel(User.name) private readonly userModel: Model<UserDocument>, private readonly discordService: DiscordBotService){}
+export class UserService {
+  constructor (@InjectModel(User.name) private readonly UserModel: Model<UserDocument>, private readonly discordService: DiscordBotService) { }
 
-    async create(user: User){
-        const userCreated = new this.userModel(user)
-        return userCreated.save()
-    }
-    
-    async show(id: string, avatarBuffer = false){
-        const result = await this.userModel.findById(id).exec()
-        if(!result)
-            return
-        return new User(await updateDiscordData(result, this.discordService), avatarBuffer)
-    }
+  async create (user: User): Promise<UserDocument> {
+    const userCreated = new this.UserModel(user)
+    return await userCreated.save()
+  }
 
-    async login(user: DiscordUser){
-        const findUser = await this.userModel.findById(user.id).exec()
-        if(findUser)
-            return new User(await updateDiscordData(findUser, user), false)
-        
-        const userData = new this.userModel({
-            _id: user.id
-        })
+  async show (id: string, avatarBuffer = false): Promise<User | undefined> {
+    const result = await this.UserModel.findById(id).exec()
+    if (result === null) { return }
+    return new User(await updateDiscordData(result, this.discordService), avatarBuffer)
+  }
 
-        return new User(await updateDiscordData(userData, user), false)
-    }
+  async login (user: DiscordUser): Promise<User> {
+    const findUser = await this.UserModel.findById(user.id).exec()
+    if (findUser === undefined) { return new User(await updateDiscordData(findUser, user), false) }
 
-    async update(user: UserDto, id: string, enableAvatar = false){
-        const userDb = await this.userModel.findById(id).exec()
-        if(!userDb)
-            return
-        const discordUserDb = await updateDiscordData(userDb, this.discordService)
-        if(!discordUserDb)
-            return
-        discordUserDb.details.description = user.bio
-        return new  User(await discordUserDb.save(), enableAvatar)
-    }
+    const userData = new this.UserModel({
+      _id: user.id
+    })
 
-    async findById(id: string){
-        return new User(await this.userModel.findById(id).exec(), false)
-    }
+    return new User(await updateDiscordData(userData, user), false)
+  }
+
+  async update (user: UserDto, id: string, enableAvatar = false): Promise<User | undefined> {
+    const userDb = await this.UserModel.findById(id).exec()
+    if (userDb === null) { return }
+    const discordUserDb = await updateDiscordData(userDb, this.discordService)
+    if (discordUserDb === undefined) { return }
+    discordUserDb.details.description = user.bio
+    return new User(await discordUserDb.save(), enableAvatar)
+  }
+
+  async findById (id: string): Promise<User> {
+    return new User(await this.UserModel.findById(id).exec(), false)
+  }
 }
