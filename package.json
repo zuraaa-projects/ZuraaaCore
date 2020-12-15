@@ -34,7 +34,7 @@
         "jsdom": "^16.4.0",
         "lodash": "^4.17.20",
         "markdown-it": "^12.0.2",
-        "mongoose": "^5.10.9",
+        "mongoose": "^5.11.8",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
         "reflect-metadata": "^0.1.13",
