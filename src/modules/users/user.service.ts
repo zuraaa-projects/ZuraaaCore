@@ -17,13 +17,17 @@ export class UserService {
 
   async show (id: string, avatarBuffer = false): Promise<User | undefined> {
     const result = await this.UserModel.findById(id).exec()
-    if (result === null) { return }
+    if (result === null) {
+      return
+    }
     return new User(await updateDiscordData(result, this.discordService), avatarBuffer)
   }
 
   async login (user: DiscordUser): Promise<User> {
     const findUser = await this.UserModel.findById(user.id).exec()
-    if (findUser === undefined) { return new User(await updateDiscordData(findUser, user), false) }
+    if (findUser === undefined) {
+      return new User(await updateDiscordData(findUser, user), false)
+    }
 
     const userData = new this.UserModel({
       _id: user.id
@@ -34,9 +38,13 @@ export class UserService {
 
   async update (user: UserDto, id: string, enableAvatar = false): Promise<User | undefined> {
     const userDb = await this.UserModel.findById(id).exec()
-    if (userDb === null) { return }
+    if (userDb === null) {
+      return
+    }
     const discordUserDb = await updateDiscordData(userDb, this.discordService)
-    if (discordUserDb === undefined) { return }
+    if (discordUserDb === undefined) {
+      return
+    }
     discordUserDb.details.description = user.bio
     return new User(await discordUserDb.save(), enableAvatar)
   }

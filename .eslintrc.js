@@ -24,6 +24,8 @@ module.exports = {
   },
   rules: {
     'linebreak-style': ['error', 'unix'],
-    'eol-last': ['error', 'always']
+    'eol-last': ['error', 'always'],
+    curly: ['error', 'all'],
+    'brace-style': ['error', '1tbs', { allowSingleLine: false }]
   }
 }

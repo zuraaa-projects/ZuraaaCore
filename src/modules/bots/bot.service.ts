@@ -40,10 +40,14 @@ export class BotService {
 
   async show (id: string, avatarBuffer = false, voteLog = false, ownerData = false): Promise<Bot | undefined> {
     let query = this.BotModel.findById(id)
-    if (ownerData) { query = query.populate('owner') }
+    if (ownerData) {
+      query = query.populate('owner')
+    }
     const result = await query.exec()
 
-    if (result === null) { return }
+    if (result === null) {
+      return
+    }
     return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
   }
 
@@ -76,7 +80,9 @@ export class BotService {
     const { isHTML, longDescription } = bot.details
     botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
     const botTrated = await updateDiscordData(botElement, this.discordService)
-    if (botTrated === undefined) { throw new Error('Discord Retornou dados invalidos.') }
+    if (botTrated === undefined) {
+      throw new Error('Discord Retornou dados invalidos.')
+    }
     await botTrated.save()
     return new Bot(botElement, false, false)
   }
@@ -86,7 +92,9 @@ export class BotService {
       _id: id
     }).exec()
 
-    if (deleted.n === undefined || isNaN(deleted.n)) { return false }
+    if (deleted.n === undefined || isNaN(deleted.n)) {
+      return false
+    }
     return true
   }
 

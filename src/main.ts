@@ -19,10 +19,7 @@ async function bootstrap (): Promise<void> {
   await app.listen(server.port)
 }
 
-//! TEMPORÁRIO
-// TODO: Arranjar uma forma de não precisar desse disable
-// eslint-disable-next-line no-void
-void bootstrap()
+bootstrap().catch(console.error)
 
 // * NOTAS DO DESENVOLVEDOR:
 // ! EM DIVERSOS MOMENTOS FOI UTILIZADO VERIFICAÇÃO ÚNICA DE ESTADO "UNDEFINED"

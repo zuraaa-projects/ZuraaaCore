@@ -19,13 +19,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate (payload: JwtPayload): Promise<RequestUserPayload> {
     const user = await this.userService.findById(payload.sub)
 
-    if (user === undefined || _.isEmpty(user)) { throw new HttpException('Token data is invalid.', HttpStatus.BAD_REQUEST) }
-    // ! TEMPORÁRIO
-    // TODO: Arranjar uma forma de não precisar desse disable
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return {
+    if (user === undefined || _.isEmpty(user)) {
+      throw new HttpException('Token data is invalid.', HttpStatus.BAD_REQUEST)
+    }
+    const validated: RequestUserPayload = {
       userId: payload.sub,
       role: payload.role
-    } as RequestUserPayload
+    }
+    return validated
   }
 }

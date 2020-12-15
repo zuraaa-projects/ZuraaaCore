@@ -22,20 +22,20 @@ export class AuthService {
   async getUser (id: string): Promise<User> {
     const userDb = await this.userService.show(id, false)
 
-    if (userDb === undefined) { throw new HttpException('User undefined', HttpStatus.BAD_REQUEST) }
+    if (userDb === undefined) {
+      throw new HttpException('User undefined', HttpStatus.BAD_REQUEST)
+    }
 
     return userDb
   }
 
   async login (user: User): Promise<{ access_token: string }> {
+    const payload: JwtPayload = {
+      role: user.details.role,
+      sub: user._id
+    }
     return {
-    // ! TEMPORÁRIO
-    // TODO: Arranjar uma forma de não precisar desse disable
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      access_token: this.jwtService.sign({
-        role: user.details.role,
-        sub: user._id
-      } as JwtPayload)
+      access_token: this.jwtService.sign(payload)
     }
   }
 }

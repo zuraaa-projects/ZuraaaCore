@@ -40,7 +40,9 @@ export async function updateDiscordData<Doc extends Document> (doc: Doc & BaseDi
             doc.avatar = discordUser.avatar
         } */
 
-    if (discordUser === undefined) { return }
+    if (discordUser === undefined) {
+      return
+    }
 
     return await doc.save()
   } catch (err) {

@@ -16,7 +16,9 @@ export default class BotController {
   @Get(':id')
   async show (@Param('id') id: string, @Query('avatarBuffer') showAvatar: boolean): Promise<Bot> {
     const bot = await this.botService.show(id, showAvatar, true)
-    if (bot === undefined || _.isEmpty(bot)) { throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND) }
+    if (bot === undefined || _.isEmpty(bot)) {
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+    }
     return bot
   }
 
@@ -29,7 +31,9 @@ export default class BotController {
       return {
         deleted: await this.botService.delete(id)
       }
-    } else { throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED) }
+    } else {
+      throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
+    }
   }
 
   @Put('')
@@ -75,7 +79,9 @@ export default class BotController {
 
     const bot = await this.botService.show(id, false, false, true)
 
-    if (bot === undefined) { throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND) }
+    if (bot === undefined) {
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+    }
 
     let svg = ''
     const { username, discriminator, _id } = bot.owner as User
