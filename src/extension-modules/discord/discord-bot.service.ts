@@ -12,7 +12,7 @@ export class DiscordBotService {
       baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bot ' + discord.bot.token
+        Authorization: `Bot ${discord.bot.token}`
       }
     })
   }
@@ -39,7 +39,7 @@ export class DiscordBotService {
 
     const { data: userDiscord } = await Axios.get('/users/@me', {
       headers: {
-        Authorization: 'Bearer ' + (tokenUser.access_token as string)
+        Authorization: `Bearer ${tokenUser.access_token as string}`
       },
       baseURL: this.baseUrl
     })
