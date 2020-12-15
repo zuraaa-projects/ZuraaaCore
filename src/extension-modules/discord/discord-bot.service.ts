@@ -6,13 +6,13 @@ import { discord } from '../../../config.json'
 export class DiscordBotService {
   private readonly api: AxiosInstance
   private readonly baseUrl = 'https://discord.com/api/v8'
-
+  private readonly botToken: string = discord.bot.token
   constructor () {
     this.api = Axios.create({
       baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bot ${discord.bot.token}`
+        Authorization: `Bot ${this.botToken}`
       }
     })
   }
