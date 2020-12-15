@@ -12,7 +12,7 @@ export class DiscordBotService {
       baseURL: this.baseUrl,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bot ${this.botToken}`
+        Authorization: 'Bot ' + this.botToken
       }
     })
   }
