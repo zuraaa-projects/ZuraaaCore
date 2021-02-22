@@ -26,8 +26,7 @@ export async function updateDiscordData<Doc extends Document> (
 
     doc.username = discordUser.username
     doc.discriminator = discordUser.discriminator
-
-    if (discordUser.avatar !== doc.avatar || avatarService.getAvatarFile(doc._id) === undefined) {
+    if (discordUser.avatar !== doc.avatar || await avatarService.getAvatarFile(doc._id) === undefined) {
       const avatarUrl = DiscordUtils.getImageUrl(discordUser)
       const response = await Axios.get(avatarUrl, {
         responseType: 'arraybuffer'
