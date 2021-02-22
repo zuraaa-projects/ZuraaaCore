@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
-import AvatarBuffer from 'src/modules/AvatarBuffer.schema'
 import { User } from 'src/modules/users/schemas/User.schema'
 import BotCount from './BotCount.schema'
 import BotDate from './BotDate.schema'
@@ -20,7 +19,6 @@ export class Bot {
     username,
     discriminator,
     avatar,
-    avatarBuffer,
     status,
     owner,
     dates,
@@ -28,12 +26,11 @@ export class Bot {
     approvedBy,
     votes,
     count
-  }: any, enableAvatar: boolean, showVotes: boolean) {
+  }: any, showVotes: boolean) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
     this.avatar = avatar
-    this.avatarBuffer = (enableAvatar) ? avatarBuffer : undefined
     this.status = status
     this.owner = owner
     this.dates = new BotDate(dates)
@@ -66,9 +63,6 @@ export class Bot {
     maxlength: 255
   })
   avatar: string
-
-  @Prop(AvatarBuffer)
-  avatarBuffer: AvatarBuffer
 
   @Prop({
     default: 'offline'

@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
-import AvatarBuffer from '../../AvatarBuffer.schema'
 import UserDate from './UserDate.schema'
 import UserDetails from './UserDetails.schema'
 
@@ -17,15 +16,13 @@ export class User {
     username,
     discriminator,
     avatar,
-    avatarBuffer,
     dates,
     details
-  }: any, enableAvatar: boolean) {
+  }: any) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
     this.avatar = avatar
-    this.avatarBuffer = (enableAvatar) ? avatarBuffer : undefined
     this.dates = dates
     this.details = new UserDetails(details)
   }
@@ -45,9 +42,6 @@ export class User {
 
   @Prop()
   avatar: string
-
-  @Prop(AvatarBuffer)
-  avatarBuffer: AvatarBuffer
 
   @Prop(UserDate)
   dates: UserDate

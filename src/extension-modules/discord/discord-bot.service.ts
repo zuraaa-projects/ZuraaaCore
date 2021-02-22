@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import Axios, { AxiosInstance } from 'axios'
+import NodeCache from 'node-cache'
 import { discord } from '../../../config.json'
 
 @Injectable()
@@ -7,6 +8,8 @@ export class DiscordBotService {
   private readonly api: AxiosInstance
   private readonly baseUrl = 'https://discord.com/api/v8'
   private readonly botToken: string = discord.bot.token
+  private readonly cache = new NodeCache()
+
   constructor () {
     this.api = Axios.create({
       baseURL: this.baseUrl,
@@ -18,7 +21,12 @@ export class DiscordBotService {
   }
 
   async getUser (id: string): Promise<DiscordUser> {
-    return (await this.api.get('/users/' + id)).data as DiscordUser
+    let user = this.cache.get<DiscordUser>(id)
+    if (user === undefined) {
+      user = (await this.api.get(`/users/${id}`)).data as DiscordUser
+      this.cache.set(id, user, 3600)
+    }
+    return user
   }
 
   async getUserLogin (code: string): Promise<DiscordUser> {
@@ -68,7 +76,7 @@ export class DiscordUtils {
   }
 }
 
-export interface DiscordUser{
+export interface DiscordUser {
   id: string
   username: string
   avatar: string

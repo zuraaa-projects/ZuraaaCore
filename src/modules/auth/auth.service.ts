@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   async getUser (id: string): Promise<User> {
-    const userDb = await this.userService.show(id, false)
+    const userDb = await this.userService.show(id)
 
     if (userDb === undefined) {
       throw new HttpException('User undefined', HttpStatus.BAD_REQUEST)

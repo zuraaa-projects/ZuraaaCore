@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Query, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Req, UseGuards } from '@nestjs/common'
 import { BotService } from 'src/modules/bots/bot.service'
 import { UserService } from 'src/modules/users/user.service'
 import _ from 'lodash'
@@ -14,10 +14,10 @@ export default class UserController {
 
   @Get('@me')
   @UseGuards(JwtAuthGuard)
-  async showMe (@Req() req: Express.Request, @Query('avatarBuffer') avatarBuffer: boolean): Promise<User> {
+  async showMe (@Req() req: Express.Request): Promise<User> {
     const { userId } = req.user as RequestUserPayload
 
-    const returnData = await this.userService.show(userId, avatarBuffer)
+    const returnData = await this.userService.show(userId)
 
     if (returnData === undefined || _.isEmpty(returnData)) {
       throw new HttpException('Could not validate the User or Discord Service is unstable', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -27,8 +27,8 @@ export default class UserController {
   }
 
   @Get(':id')
-  async show (@Param('id') id: string, @Query('avatarBuffer') avatarBuffer: boolean): Promise<User> {
-    const user = await this.userService.show(id, avatarBuffer)
+  async show (@Param('id') id: string): Promise<User> {
+    const user = await this.userService.show(id)
 
     if (user === undefined || _.isEmpty(user)) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
@@ -39,7 +39,7 @@ export default class UserController {
 
   @Get(':id/bots')
   async getBots (@Param('id') id: string): Promise<Bot[]> {
-    const user = await this.userService.show(id, false)
+    const user = await this.userService.show(id)
 
     if (user === undefined || _.isEmpty(user)) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)

@@ -14,8 +14,8 @@ export default class BotController {
   constructor (private readonly botService: BotService) {}
 
   @Get(':id')
-  async show (@Param('id') id: string, @Query('avatarBuffer') showAvatar: boolean): Promise<Bot> {
-    const bot = await this.botService.show(id, showAvatar, true)
+  async show (@Param('id') id: string): Promise<Bot> {
+    const bot = await this.botService.show(id, true)
     if (bot === undefined || _.isEmpty(bot)) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
@@ -36,7 +36,7 @@ export default class BotController {
     }
   }
 
-  @Put('')
+  @Put()
   @UseGuards(JwtAuthGuard)
   async updateAllBots (@Query('type') type: string, @Req() req: Express.Request): Promise<void> {
     const { role } = req.user as RequestUserPayload
@@ -50,18 +50,28 @@ export default class BotController {
   }
 
   @Get()
-  async showAll (@Query('type') type: string): Promise<Bot[] | { bots_count: number } | undefined> {
-    const bots: Bot[] = []
-    switch (type) {
+  async showAll (@Query() query: {[keyof: string]: string}): Promise<Bot[] | { bots_count: number } | undefined> {
+    switch (query.type) {
       case 'count':
         return {
           bots_count: await this.botService.count()
         }
       case 'top':
-        for (const bot of await this.botService.showAll('', 'mostVoted', 1, 6)) {
-          bots.push(new Bot(bot, false, false))
+        return (
+          await this.botService
+            .showAll('', 'mostVoted', 1, 6)
+        ).map(bot => new Bot(bot, false))
+      case 'page': {
+        let page = Number(query.page)
+
+        if (Number.isNaN(page) || page < 1) {
+          page = 1
         }
-        return bots
+
+        return (
+          await this.botService.showAll('', 'recent', page, 18)
+        ).map(bot => new Bot(bot, false))
+      }
     }
   }
 
@@ -77,7 +87,7 @@ export default class BotController {
   async shield (@Param('id') id: string, @Res() res: Response, @Query('type') type: string): Promise<Response<unknown>> {
     const svgCreator = new SvgCreator()
 
-    const bot = await this.botService.show(id, false, false, true)
+    const bot = await this.botService.show(id, false, false)
 
     if (bot === undefined) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)

@@ -7,12 +7,17 @@ import { RequestUserPayload } from '../auth/jwt.payload'
 import { User } from '../users/schemas/User.schema'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { Bot, BotDocument } from './schemas/Bot.schema'
+import { AvatarService } from '../avatars/avatar.service'
 import md from 'markdown-it'
 import xss from 'xss'
 
 @Injectable()
 export class BotService {
-  constructor (@InjectModel(Bot.name) private readonly BotModel: Model<BotDocument>, private readonly discordService: DiscordBotService) {}
+  constructor (
+    @InjectModel(Bot.name) private readonly BotModel: Model<BotDocument>,
+    private readonly discordService: DiscordBotService,
+    private readonly avatarService: AvatarService
+  ) {}
 
   async getBotsByOwner (owner: User): Promise<Bot[]> {
     const bots = await this.BotModel.find({
@@ -28,7 +33,7 @@ export class BotService {
     const botsFormated: Bot[] = []
 
     for (const bot of bots) {
-      botsFormated.push(new Bot(bot, false, false))
+      botsFormated.push(new Bot(bot, false))
     }
 
     return botsFormated
@@ -38,7 +43,7 @@ export class BotService {
     return await this.BotModel.countDocuments()
   }
 
-  async show (id: string, avatarBuffer = false, voteLog = false, ownerData = false): Promise<Bot | undefined> {
+  async show (id: string, voteLog = false, ownerData = false): Promise<Bot | undefined> {
     let query = this.BotModel.findById(id)
     if (ownerData) {
       query = query.populate('owner')
@@ -48,11 +53,13 @@ export class BotService {
     if (result === null) {
       return
     }
-    return new Bot(await updateDiscordData(result, this.discordService), avatarBuffer, voteLog)
+    return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog)
   }
 
   async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18): Promise<Bot[]> {
-    const params: FilterQuery<unknown> = {}
+    const params: FilterQuery<unknown> = {
+      $and: [{ approvedBy: { $ne: null } }]
+    }
     let ordenar: Record<string, unknown> = {}
     if (pesquisa.length > 0) {
       const regex = { $regex: pesquisa, $options: 'i' }
@@ -65,11 +72,19 @@ export class BotService {
       ordenar = { 'votes.current': -1 }
     }
 
-    const bots = await this.BotModel.find(params).sort(ordenar).limit(limite).skip((pagina - 1) * limite).exec()
+    const bots = await this.BotModel
+      .find(params)
+      .sort(ordenar)
+      .limit(limite)
+      .skip((pagina - 1) * limite)
+      .setOptions({
+        // allowDiskUse: true
+      })
+      .exec()
     const botsFormated: Bot[] = []
 
     for (const bot of bots) {
-      botsFormated.push(new Bot(bot, false, false))
+      botsFormated.push(new Bot(bot, false))
     }
     return botsFormated
   }
@@ -79,12 +94,12 @@ export class BotService {
     botElement.owner = userPayload.userId
     const { isHTML, longDescription } = bot.details
     botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
-    const botTrated = await updateDiscordData(botElement, this.discordService)
+    const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService)
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
     }
     await botTrated.save()
-    return new Bot(botElement, false, false)
+    return new Bot(botElement, false)
   }
 
   async delete (id: string): Promise<boolean> {

@@ -1,19 +1,21 @@
 // import Axios from 'axios'
+import Axios from 'axios'
 import { Document } from 'mongoose'
-import { DiscordBotService, DiscordUser /*, DiscordUtils */ } from 'src/extension-modules/discord/discord-bot.service'
+import { DiscordBotService, DiscordUser, DiscordUtils } from 'src/extension-modules/discord/discord-bot.service'
+import { AvatarService } from 'src/modules/avatars/avatar.service'
 
-export interface BaseDiscordSchema{
-  avatarBuffer: {
-    contentType: string
-    data: Buffer
-  }
+export interface BaseDiscordSchema {
   avatar: string
   username: string
   discriminator: string
   _id: string
 }
 
-export async function updateDiscordData<Doc extends Document> (doc: Doc & BaseDiscordSchema, discordService: DiscordBotService | DiscordUser): Promise<Doc | undefined> {
+export async function updateDiscordData<Doc extends Document> (
+  doc: Doc & BaseDiscordSchema,
+  discordService: DiscordBotService | DiscordUser,
+  avatarService: AvatarService
+): Promise<Doc | undefined> {
   try {
     let discordUser: DiscordUser | undefined
     if (discordService instanceof DiscordBotService) {
@@ -24,21 +26,19 @@ export async function updateDiscordData<Doc extends Document> (doc: Doc & BaseDi
 
     doc.username = discordUser.username
     doc.discriminator = discordUser.discriminator
-    /*
-        if(discordUser.avatar != doc.avatar || !(doc.avatarBuffer && doc.avatarBuffer.contentType)){
 
-            const avatarUrl = DiscordUtils.getImageUrl(discordUser)
-            const response = await Axios.get(avatarUrl, {
-                responseType: 'arraybuffer'
-            })
+    if (discordUser.avatar !== doc.avatar || avatarService.getAvatarFile(doc._id) === undefined) {
+      const avatarUrl = DiscordUtils.getImageUrl(discordUser)
+      const response = await Axios.get(avatarUrl, {
+        responseType: 'arraybuffer'
+      })
 
-            doc.avatarBuffer = {
-                contentType: response.headers['content-type'],
-                data: Buffer.from(response.data)
-            }
+      const extension = response.headers['content-type'].split('/')[1]
 
-            doc.avatar = discordUser.avatar
-        } */
+      await avatarService.writeAvatar(doc._id, extension, response.data)
+
+      doc.avatar = discordUser.avatar
+    }
 
     if (discordUser === undefined) {
       return
