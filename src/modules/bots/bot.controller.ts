@@ -69,7 +69,7 @@ export default class BotController {
         }
 
         return (
-          await this.botService.showAll('', 'recent', page, 18)
+          await this.botService.showAll(query.search ?? '', 'recent', page)
         ).map(bot => new Bot(bot, false))
       }
     }
