@@ -11,7 +11,7 @@ export default class AuthController {
   async login (@Body() data: {
     type?: string
     identify: string
-    data: string
+    code: string
   }): Promise<{ access_token: string }> {
     if (jwt.authorized_clients.findIndex(x => x === data.identify) === -1) {
       throw new HttpException('The application is not authorized to use this endpoint.', HttpStatus.NOT_ACCEPTABLE)
@@ -20,10 +20,10 @@ export default class AuthController {
     let userLogged: User
 
     if (data.type === 'bot') {
-      userLogged = await this.authService.getUser(data.data)
+      userLogged = await this.authService.getUser(data.code)
     } else {
-      userLogged = await this.authService.validateUser(data.data).catch(() => {
-        throw new HttpException('\'data\' is invalid.', HttpStatus.BAD_REQUEST)
+      userLogged = await this.authService.validateUser(data.code).catch(() => {
+        throw new HttpException('\'code\' is invalid.', HttpStatus.BAD_REQUEST)
       })
     }
 
