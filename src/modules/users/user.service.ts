@@ -30,7 +30,7 @@ export class UserService {
 
   async login (user: DiscordUser): Promise<User> {
     const findUser = await this.UserModel.findById(user.id).exec()
-    if (findUser === undefined) {
+    if (findUser !== null) {
       return new User(await updateDiscordData(findUser, user, this.avatarService))
     }
 
