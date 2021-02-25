@@ -7,7 +7,7 @@
             "id": "id da sua aplicação discord",
             "secret": "secret aplicação discord",
             "scope": "identify",
-            "redirect": "callback registrado em sua aplicação discord"
+            "redirect": "callback do site registrado em sua aplicação discord"
         },
         "bot": {
             "token": "token do bot discord"
