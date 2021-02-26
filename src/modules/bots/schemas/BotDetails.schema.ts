@@ -19,7 +19,8 @@ export class BotDetails {
     isHTML,
     website,
     otherOwners,
-    customURL
+    customURL,
+    guilds
   }: any) {
     this.prefix = prefix
     this.tags = tags
@@ -33,6 +34,7 @@ export class BotDetails {
     this.isHTML = isHTML
     this.otherOwners = otherOwners
     this.customURL = customURL
+    this.guilds = guilds
   }
 
   @Prop({
@@ -95,4 +97,10 @@ export class BotDetails {
     maxlength: 255
   })
   customURL: string
+
+  @Prop({
+    required: true,
+    default: 0
+  })
+  guilds: number
 }

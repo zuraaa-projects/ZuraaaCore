@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { DiscordModule } from 'src/extension-modules/discord/discord.module'
-import { UserModule } from '../users/user.module'
+import { Bots_UsersModule } from '../bots-users.module'
 import AuthController from './auth.controller'
 import { JwtModule } from '@nestjs/jwt'
 import { jwt } from '../../../config.json'
@@ -11,7 +11,7 @@ import { JwtStrategy } from './jwt.strategy'
 @Module({
   imports: [
     DiscordModule,
-    UserModule,
+    Bots_UsersModule,
     PassportModule,
     JwtModule.register({
       secret: jwt.secret,

@@ -1,13 +1,14 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Put } from '@nestjs/common'
-import { Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
-import { BotService } from 'src/modules/bots/bot.service'
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Put, Patch } from '@nestjs/common'
+import { Body, Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
+import { BotService, TimeError } from 'src/modules/bots/bot.service'
 import { SvgCreator } from 'src/utils/svg-creator'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import _ from 'lodash'
 import { User } from '../users/schemas/User.schema'
 import { RequestUserPayload, RoleLevel } from '../auth/jwt.payload'
 import { Bot } from './schemas/Bot.schema'
+import CreateBotDto from './dtos/created-edited/bot.dto'
 
 @Controller('bots')
 export default class BotController {
@@ -24,7 +25,7 @@ export default class BotController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove (@Param('id') id: string, @Req() req: Express.Request): Promise<{deleted: boolean}> {
+  async remove (@Param('id') id: string, @Req() req: Request): Promise<{deleted: boolean}> {
     const { role, userId } = req.user as RequestUserPayload
     const bot = await this.botService.show(id, false)
     if (role >= RoleLevel.adm || (bot !== undefined && bot.owner === userId)) {
@@ -38,7 +39,7 @@ export default class BotController {
 
   @Put()
   @UseGuards(JwtAuthGuard)
-  async updateAllBots (@Query('type') type: string, @Req() req: Express.Request): Promise<void> {
+  async updateAllBots (@Query('type') type: string, @Req() req: Request): Promise<void> {
     const { role } = req.user as RequestUserPayload
     if (role === RoleLevel.owner) {
       if (type === 'resetVotes') {
@@ -77,9 +78,41 @@ export default class BotController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async add (): Promise<void> {
-    //! DISABLED (by: Takasakiii)
-    // return this.botService.add(bot, req.user as RequestUserPayload)
+  async add (@Body() bot: CreateBotDto, @Req() req: Request): Promise<Bot> {
+    return (await this.botService.add(bot, req.user as RequestUserPayload))
+  }
+
+  @Post(':id/votes')
+  @UseGuards(JwtAuthGuard)
+  async vote (@Param('id') id: string, @Req() req: Request): Promise<number | string | Date > {
+    try {
+      const { userId } = req.user as RequestUserPayload
+      const result = await this.botService.vote(id, userId)
+      if (result === undefined) {
+        throw new HttpException('Bot was Not Found', HttpStatus.NOT_FOUND)
+      }
+      return result
+    } catch (error) {
+      if (error instanceof TimeError) {
+        throw new HttpException(error.nextTime, HttpStatus.TOO_MANY_REQUESTS)
+      }
+      throw new HttpException('404', HttpStatus.NOT_FOUND)
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateBot (@Param('id') id: string, @Body() updatedBot: CreateBotDto, @Req() req: Request): Promise<Bot> {
+    const { role, userId } = req.user as RequestUserPayload
+    const oldBot = await this.botService.show(id)
+    if (oldBot === undefined || _.isEmpty(oldBot)) {
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+    }
+    if (role >= RoleLevel.adm || (oldBot !== undefined && oldBot.owner === userId)) {
+      return (await this.botService.update(oldBot._id, updatedBot))
+    } else {
+      throw new HttpException('You do not have sufficient permission to use this endpoint because this bot is not yours.', HttpStatus.UNAUTHORIZED)
+    }
   }
 
   @Get(':id/shield')

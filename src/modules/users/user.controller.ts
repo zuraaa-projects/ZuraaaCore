@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Req, UseGuards } from '@nestjs/common'
-import { BotService } from 'src/modules/bots/bot.service'
+
 import { UserService } from 'src/modules/users/user.service'
 import _ from 'lodash'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
@@ -10,7 +10,9 @@ import { Bot } from '../bots/schemas/Bot.schema'
 
 @Controller('users')
 export default class UserController {
-  constructor (private readonly userService: UserService, private readonly botService: BotService) {}
+  constructor (
+    private readonly userService: UserService
+  ) {}
 
   @Get('@me')
   @UseGuards(JwtAuthGuard)
@@ -45,7 +47,7 @@ export default class UserController {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
     }
 
-    return await this.botService.getBotsByOwner(user)
+    return await this.userService.showBots(user)
   }
 
   @Put('@me')
@@ -53,7 +55,7 @@ export default class UserController {
   async update (@Body() userData: UserDto, @Req() req: Express.Request): Promise<User> {
     const { userId } = req.user as RequestUserPayload
 
-    const updatedData = await this.userService.update(userData, userId)
+    const updatedData = await this.userService.update(userData, userId, { type: 'description' })
     if (updatedData === undefined || _.isEmpty(updatedData)) {
       throw new HttpException('Could not validate the User or Discord Service is unstable.', HttpStatus.INTERNAL_SERVER_ERROR)
     }

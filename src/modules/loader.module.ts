@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common'
-import { BotModule } from './bots/bot.module'
-import { UserModule } from './users/user.module'
+import { Bots_UsersModule } from './bots-users.module'
 
 @Module({
   imports: [
-    UserModule,
-    BotModule
+    Bots_UsersModule
   ]
 })
 export class LoaderModule {}
