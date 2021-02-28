@@ -34,7 +34,7 @@
         "helmet": "^4.2.0",
         "jsdom": "^16.4.0",
         "lodash": "^4.17.20",
-        "markdown-it": "^12.0.2",
+        "markdown-it": "^12.0.4",
         "mongoose": "^5.10.9",
         "node-cache": "^5.1.2",
         "passport": "^0.4.1",
