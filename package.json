@@ -52,7 +52,7 @@
         "@types/express": "^4.17.3",
         "@types/jest": "26.0.19",
         "@types/jsdom": "^16.2.4",
-        "@types/lodash": "^4.14.162",
+        "@types/lodash": "^4.14.168",
         "@types/markdown-it": "^10.0.2",
         "@types/mongoose": "^5.10.3",
         "@types/node": "^14.11.10",
