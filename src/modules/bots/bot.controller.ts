@@ -87,7 +87,7 @@ export default class BotController {
   async shield (@Param('id') id: string, @Res() res: Response, @Query('type') type: string): Promise<Response<unknown>> {
     const svgCreator = new SvgCreator()
 
-    const bot = await this.botService.show(id, false, false)
+    const bot = await this.botService.show(id, false, true)
 
     if (bot === undefined) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
