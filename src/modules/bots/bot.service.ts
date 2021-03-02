@@ -114,7 +114,7 @@ export class BotService {
   }
 
   async resetVotes (): Promise<void> {
-    return await this.BotModel.updateMany({}, {
+    await this.BotModel.updateMany({}, {
       'votes.current': 0,
       'votes.voteslog': []
     }).exec()
