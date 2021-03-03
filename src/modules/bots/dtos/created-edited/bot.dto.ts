@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer'
-import { IsNotEmpty, Length, ValidateNested } from 'class-validator'
+import { IsNotEmptyObject, Length, ValidateNested } from 'class-validator'
 import DetailsBotDto from './details-bot.dto'
 
 export default class CreateBotDto {
   @Length(16, 19)
   _id!: string
 
-  @IsNotEmpty()
+  @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => DetailsBotDto)
   details!: DetailsBotDto

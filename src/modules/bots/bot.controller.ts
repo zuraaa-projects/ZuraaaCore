@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Put } from '@nestjs/common'
-import { Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
+import { Body, Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
 import { BotService } from 'src/modules/bots/bot.service'
 import { SvgCreator } from 'src/utils/svg-creator'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
@@ -8,6 +8,7 @@ import _ from 'lodash'
 import { User } from '../users/schemas/User.schema'
 import { RequestUserPayload, RoleLevel } from '../auth/jwt.payload'
 import { Bot } from './schemas/Bot.schema'
+import CreateBotDto from './dtos/created-edited/bot.dto'
 
 @Controller('bots')
 export default class BotController {
@@ -77,9 +78,8 @@ export default class BotController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async add (): Promise<void> {
-    //! DISABLED (by: Takasakiii)
-    // return this.botService.add(bot, req.user as RequestUserPayload)
+  async add (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
+    return await this.botService.add(bot, req.user as RequestUserPayload)
   }
 
   @Get(':id/shield')

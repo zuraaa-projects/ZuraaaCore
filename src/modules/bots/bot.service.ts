@@ -10,6 +10,7 @@ import { Bot, BotDocument } from './schemas/Bot.schema'
 import { AvatarService } from '../avatars/avatar.service'
 import md from 'markdown-it'
 import xss from 'xss'
+import _ from 'lodash'
 
 @Injectable()
 export class BotService {
@@ -93,7 +94,9 @@ export class BotService {
     const botElement = new this.BotModel(bot)
     botElement.owner = userPayload.userId
     const { isHTML, longDescription } = bot.details
-    botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
+    if (!_.isEmpty(longDescription)) {
+      botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
+    }
     const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService)
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
