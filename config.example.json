@@ -16,7 +16,14 @@
     "jwt": {
         "secret": "secret usado para criptografar os tokens jwt (recomendo no min 128 caracteres)",
         "authorized_clients": [
-            "identificação dos seus clientes oficiais (tipo bot, site, etc) para que os mesmos consigam acessar /auth/user"
+            {
+                "secret": "secret usado para criptografar os tokens jwt (recomendo no min 128 caracteres)",
+                "type": "bot"
+            },
+            {
+                "secret": "secret usado para criptografar os tokens jwt (recomendo no min 128 caracteres)",
+                "type": "code"
+            }
         ]
     },
     "server": {
