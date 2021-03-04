@@ -41,7 +41,7 @@ jobs:
 
       - name: Install dependencies 👨🏻‍💻
         run: yarn
-      - name: Copy config example
+      - name: Copy config example 📓
         run: cp config.example.json config.json
       - name: Run Linter ✏️
         run: yarn lint
