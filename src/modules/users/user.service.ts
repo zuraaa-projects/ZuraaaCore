@@ -22,7 +22,16 @@ export class UserService {
   }
 
   async show (id: string): Promise<User | undefined> {
-    const result = await this.UserModel.findById(id).exec()
+    const result = await this.UserModel.findOne({
+      $or: [
+        {
+          _id: id
+        },
+        {
+          'details.customURL': id
+        }
+      ]
+    }).exec()
     if (result === null) {
       return
     }
