@@ -45,7 +45,16 @@ export class BotService {
   }
 
   async show (id: string, voteLog = false, ownerData = false): Promise<Bot | undefined> {
-    let query = this.BotModel.findById(id)
+    let query = this.BotModel.findOne({
+      $or: [
+        {
+          _id: id
+        },
+        {
+          'details.customURL': id
+        }
+      ]
+    })
     if (ownerData) {
       query = query.populate('owner')
     }
