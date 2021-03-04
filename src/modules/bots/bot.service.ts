@@ -66,7 +66,7 @@ export class BotService {
     return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog)
   }
 
-  async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18): Promise<Bot[]> {
+  async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18, tags: string[] | undefined = undefined): Promise<Bot[]> {
     const params: FilterQuery<unknown> = {
       $and: [{ approvedBy: { $ne: null } }]
     }
@@ -80,6 +80,14 @@ export class BotService {
       ordenar = { 'dates.sent': -1 }
     } else if (sort === 'mostVoted') {
       ordenar = { 'votes.current': -1 }
+    }
+
+    if (!_.isEmpty(tags)) {
+      params.$and = [{
+        'details.tags': {
+          $all: tags
+        }
+      }]
     }
 
     const bots = await this.BotModel

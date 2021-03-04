@@ -9,6 +9,7 @@ import { User } from '../users/schemas/User.schema'
 import { RequestUserPayload, RoleLevel } from '../auth/jwt.payload'
 import { Bot } from './schemas/Bot.schema'
 import CreateBotDto from './dtos/created-edited/bot.dto'
+import FindBot from './interfaces/FindBot'
 
 @Controller('bots')
 export default class BotController {
@@ -55,7 +56,7 @@ export default class BotController {
   }
 
   @Get()
-  async showAll (@Query() query: {[keyof: string]: string}): Promise<Bot[] | { bots_count: number } | undefined> {
+  async showAll (@Query() query: FindBot): Promise<Bot[] | { bots_count: number } | undefined> {
     switch (query.type) {
       case 'count':
         return {
@@ -66,15 +67,22 @@ export default class BotController {
           await this.botService
             .showAll('', 'mostVoted', 1, 6)
         ).map(bot => new Bot(bot, false))
-      case 'page': {
+      default: {
         let page = Number(query.page)
+        const tags = query.tags?.split(',')
 
         if (Number.isNaN(page) || page < 1) {
           page = 1
         }
 
+        const bots = await this.botService.showAll(query.search ?? '', 'recent', page, 18, tags)
+
+        if (_.isEmpty(bots)) {
+          throw new HttpException('No bot found in the list', HttpStatus.NOT_FOUND)
+        }
+
         return (
-          await this.botService.showAll(query.search ?? '', 'recent', page)
+          bots
         ).map(bot => new Bot(bot, false))
       }
     }
