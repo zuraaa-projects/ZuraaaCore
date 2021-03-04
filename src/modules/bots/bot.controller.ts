@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch } from '@nestjs/common'
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put } from '@nestjs/common'
 import { Body, Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
 import { BotService } from 'src/modules/bots/bot.service'
 import { SvgCreator } from 'src/utils/svg-creator'
@@ -28,12 +28,16 @@ export default class BotController {
   async remove (@Param('id') id: string, @Req() req: Express.Request): Promise<{deleted: boolean}> {
     const { role, userId } = req.user as RequestUserPayload
     const bot = await this.botService.show(id, false)
-    if (role >= RoleLevel.adm || (bot !== undefined && bot.owner === userId)) {
-      return {
-        deleted: await this.botService.delete(id)
+    if (bot !== undefined) {
+      if (role >= RoleLevel.adm || bot.owner === userId) {
+        return {
+          deleted: await this.botService.delete(id)
+        }
+      } else {
+        throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
       }
     } else {
-      throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
+      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
     }
   }
 
@@ -80,6 +84,29 @@ export default class BotController {
   @UseGuards(JwtAuthGuard)
   async add (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
     return await this.botService.add(bot, req.user as RequestUserPayload)
+  }
+
+  @Put()
+  @UseGuards(JwtAuthGuard)
+  async update (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
+    const { role, userId } = req.user as RequestUserPayload
+    let botUpdate = await this.botService.show(bot._id, false)
+
+    if (botUpdate !== undefined) {
+      if (role >= RoleLevel.adm || botUpdate.owner === userId) {
+        botUpdate = await this.botService.update(bot, botUpdate)
+
+        if (botUpdate !== undefined) {
+          return botUpdate
+        } else {
+          throw new HttpException('Fail to update bot', HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+      } else {
+        throw new HttpException('You do not have sufficient permission to update this bot.', HttpStatus.UNAUTHORIZED)
+      }
+    } else {
+      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+    }
   }
 
   @Get(':id/shield')

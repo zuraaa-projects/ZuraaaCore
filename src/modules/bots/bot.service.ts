@@ -131,4 +131,34 @@ export class BotService {
       'votes.voteslog': []
     }).exec()
   }
+
+  async update (bot: CreateBotDto, botUpdate: Bot): Promise<Bot | undefined> {
+    const botDb = await this.BotModel.findById(botUpdate._id).exec()
+    if (botDb == null) {
+      return
+    }
+
+    const discordBotDb = await updateDiscordData(botDb, this.discordService, this.avatarService)
+    if (discordBotDb == null) {
+      return
+    }
+
+    botDb.details.shortDescription = bot.details.shortDescription
+    botDb.details.longDescription = bot.details.longDescription
+    if (!_.isEmpty(bot.details.longDescription)) {
+      botDb.details.htmlDescription = (bot.details.isHTML) ? xss(bot.details.longDescription) : md().render(bot.details.longDescription)
+    } else {
+      botDb.details.htmlDescription = ''
+    }
+    botDb.details.isHTML = bot.details.isHTML
+    botDb.details.prefix = bot.details.prefix
+    botDb.details.tags = bot.details.tags
+    botDb.details.library = bot.details.library
+    botDb.details.customInviteLink = bot.details.customInviteLink
+    botDb.details.supportServer = bot.details.supportServer
+    botDb.details.website = bot.details.website
+    botDb.details.otherOwners = bot.details.otherOwners
+
+    return new Bot(await botDb.save(), true)
+  }
 }
