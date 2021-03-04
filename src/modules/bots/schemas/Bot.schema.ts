@@ -48,7 +48,8 @@ export class Bot {
 
   @Prop({
     required: true,
-    maxlength: 32
+    maxlength: 32,
+    index: true
   })
   username: string
 

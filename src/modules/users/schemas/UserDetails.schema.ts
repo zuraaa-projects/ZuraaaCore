@@ -6,9 +6,10 @@ import { Prop, Schema } from '@nestjs/mongoose'
 
 @Schema()
 export default class UserDetails {
-  constructor ({ description, role }: any) {
+  constructor ({ description, role, customURL }: any) {
     this.description = description
     this.role = role
+    this.customURL = customURL
   }
 
   @Prop()
@@ -18,4 +19,10 @@ export default class UserDetails {
     default: 0
   })
   role: number
+
+  @Prop({
+    maxlength: 255,
+    index: true
+  })
+  customURL: string
 }

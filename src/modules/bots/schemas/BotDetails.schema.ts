@@ -5,7 +5,8 @@
 import { Prop, Schema } from '@nestjs/mongoose'
 import { AppLibrary, BotsTags } from '../enums/details.enums'
 
-@Schema()
+@Schema({
+})
 export class BotDetails {
   constructor ({
     prefix,
@@ -59,7 +60,8 @@ export class BotDetails {
   @Prop({
     required: true,
     minlength: 3,
-    maxlength: 300
+    maxlength: 300,
+    index: true
   })
   shortDescription: string
 
@@ -92,7 +94,8 @@ export class BotDetails {
   otherOwners: string[]
 
   @Prop({
-    maxlength: 255
+    maxlength: 255,
+    index: true
   })
   customURL: string
 }

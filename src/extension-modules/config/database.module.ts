@@ -4,7 +4,9 @@ import { mongo } from '../../../config.json'
 
 @Module({
   imports: [
-    MongooseModule.forRoot(mongo.uri)
+    MongooseModule.forRoot(mongo.uri, {
+      useCreateIndex: true
+    })
   ]
 })
 export class DatabaseModule {}
