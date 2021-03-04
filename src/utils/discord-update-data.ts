@@ -1,8 +1,10 @@
 // import Axios from 'axios'
 import Axios from 'axios'
 import { Document } from 'mongoose'
-import { DiscordBotService, DiscordUser, DiscordUtils } from 'src/extension-modules/discord/discord-bot.service'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import DiscordUser from 'src/extension-modules/discord/interfaces/DiscordUser'
 import { AvatarService } from 'src/modules/avatars/avatar.service'
+import { getImageUrl } from './get-image-url'
 
 export interface BaseDiscordSchema {
   avatar: string
@@ -27,7 +29,7 @@ export async function updateDiscordData<Doc extends Document> (
     doc.username = discordUser.username
     doc.discriminator = discordUser.discriminator
     if (discordUser.avatar !== doc.avatar || await avatarService.getAvatarFile(doc._id) === undefined) {
-      const avatarUrl = DiscordUtils.getImageUrl(discordUser)
+      const avatarUrl = getImageUrl(discordUser)
       const response = await Axios.get(avatarUrl, {
         responseType: 'arraybuffer'
       })

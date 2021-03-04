@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import Axios, { AxiosInstance } from 'axios'
 import NodeCache from 'node-cache'
 import { discord } from '../../../config.json'
+import DiscordUser from './interfaces/DiscordUser'
 
 @Injectable()
 export class DiscordBotService {
@@ -54,33 +55,4 @@ export class DiscordBotService {
 
     return userDiscord as DiscordUser
   }
-}
-
-// ! TEMPORÁRIO
-// TODO: Arranjar uma forma de não precisar desse disable
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class DiscordUtils {
-  static getImageUrl ({
-    avatar,
-    discriminator,
-    id
-  }: DiscordUser): string {
-    if (avatar === undefined) {
-      const number = parseInt(discriminator) % 5
-      return `https://cdn.discordapp.com/embed/avatars/${number}.png`
-    }
-
-    const isAnimatedAvatar = avatar.startsWith('a_')
-    const avatarExtension = (isAnimatedAvatar) ? '.gif' : '.webp?size=1024'
-    return `https://cdn.discordapp.com/avatars/${id}/${avatar}${avatarExtension}`
-  }
-}
-
-export interface DiscordUser {
-  id: string
-  username: string
-  avatar: string
-  discriminator: string
-  public_flags: number
-  bot: boolean
 }
