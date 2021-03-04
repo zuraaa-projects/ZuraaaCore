@@ -1,10 +1,15 @@
 import { Controller, Get, Param, Res } from '@nestjs/common'
 import { Response } from 'express'
+import _ from 'lodash'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import { AvatarService } from './avatar.service'
 
 @Controller('avatars')
 export default class AvatarController {
-  constructor (private readonly avatarsService: AvatarService) {}
+  constructor (
+    private readonly avatarsService: AvatarService,
+    private readonly discordService: DiscordBotService
+  ) {}
 
   @Get(':id')
   async avatar (@Param('id') id: string, @Res() res: Response): Promise<void> {
@@ -13,7 +18,8 @@ export default class AvatarController {
       res.contentType(image.type)
       res.send(image.data)
     } else {
-      res.redirect('https://cdn.discordapp.com/embed/avatars/4.png')
+      const user = await this.discordService.getUser(id)
+      res.redirect(`https://cdn.discordapp.com/embed/avatars/${_.toInteger(user.discriminator) % 5}.png`)
     }
   }
 }
