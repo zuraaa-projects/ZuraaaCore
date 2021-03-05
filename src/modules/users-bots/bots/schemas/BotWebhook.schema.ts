@@ -11,7 +11,7 @@ export default class BotWebhook {
     url,
     type,
     lastError
-  }: any) {
+  }: any, showWebhook: boolean) {
     this.authorization = authorization
     this.url = url
     this.type = type

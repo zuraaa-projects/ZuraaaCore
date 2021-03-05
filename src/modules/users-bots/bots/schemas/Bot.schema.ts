@@ -28,7 +28,7 @@ export class Bot {
     votes,
     count,
     webhook
-  }: any, showVotes: boolean) {
+  }: any, showVotes: boolean, showWebhook: boolean) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
@@ -40,7 +40,7 @@ export class Bot {
     this.approvedBy = approvedBy
     this.votes = new BotVotes(votes, showVotes)
     this.count = new BotCount(count)
-    this.webhook = new BotWebhook(webhook)
+    this.webhook = new BotWebhook(webhook, showWebhook)
   }
 
   @Prop({

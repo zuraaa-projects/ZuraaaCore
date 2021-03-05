@@ -67,7 +67,7 @@ export default class BotController {
         return (
           await this.botService
             .showAll('', 'mostVoted', 1, 6)
-        ).map(bot => new Bot(bot, false))
+        ).map(bot => new Bot(bot, false, false))
       default: {
         let page = Number(query.page)
         const tags = query.tags?.split(',')
@@ -84,7 +84,7 @@ export default class BotController {
 
         return (
           bots
-        ).map(bot => new Bot(bot, false))
+        ).map(bot => new Bot(bot, false, false))
       }
     }
   }
