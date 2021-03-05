@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
-import { UserService } from '../users/user.service'
 import { JwtService } from '@nestjs/jwt'
-import { User } from '../users/schemas/User.schema'
 import { JwtPayload } from './jwt.payload'
+import { UserService } from '../users-bots/users/user.service'
+import { User } from '../users-bots/users/schemas/User.schema'
 
 @Injectable()
 export class AuthService {

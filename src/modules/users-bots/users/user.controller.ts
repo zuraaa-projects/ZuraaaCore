@@ -1,12 +1,12 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Req, UseGuards } from '@nestjs/common'
-import { BotService } from 'src/modules/bots/bot.service'
-import { UserService } from 'src/modules/users/user.service'
 import _ from 'lodash'
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'
-import UserDto from './dtos/edit-user/user.dto'
-import { RequestUserPayload } from '../auth/jwt.payload'
-import { User } from './schemas/User.schema'
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
+import { RequestUserPayload } from 'src/modules/auth/jwt.payload'
+import { BotService } from '../bots/bot.service'
 import { Bot } from '../bots/schemas/Bot.schema'
+import UserDto from './dtos/edit-user/user.dto'
+import { User } from './schemas/User.schema'
+import { UserService } from './user.service'
 
 @Controller('users')
 export default class UserController {

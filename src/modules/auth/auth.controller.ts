@@ -1,7 +1,7 @@
 import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { jwt } from '../../../config.json'
-import { User } from '../users/schemas/User.schema'
+import { User } from '../users-bots/users/schemas/User.schema'
 
 @Controller('auth')
 export default class AuthController {

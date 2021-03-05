@@ -1,23 +1,26 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model, FilterQuery } from 'mongoose'
+import _ from 'lodash'
+import { FilterQuery, Model } from 'mongoose'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import { RequestUserPayload } from 'src/modules/auth/jwt.payload'
+import { AvatarService } from 'src/modules/avatars/avatar.service'
 import { updateDiscordData } from 'src/utils/discord-update-data'
-import { RequestUserPayload } from '../auth/jwt.payload'
+import xss from 'xss'
+import md from 'markdown-it'
 import { User } from '../users/schemas/User.schema'
+import { UserService } from '../users/user.service'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { Bot, BotDocument } from './schemas/Bot.schema'
-import { AvatarService } from '../avatars/avatar.service'
-import md from 'markdown-it'
-import xss from 'xss'
-import _ from 'lodash'
+import TimeError from './exceptions/TimeError'
 
 @Injectable()
 export class BotService {
   constructor (
     @InjectModel(Bot.name) private readonly BotModel: Model<BotDocument>,
     private readonly discordService: DiscordBotService,
-    private readonly avatarService: AvatarService
+    private readonly avatarService: AvatarService,
+    private readonly userService: UserService
   ) {}
 
   async getBotsByOwner (owner: User): Promise<Bot[]> {
@@ -120,6 +123,27 @@ export class BotService {
     }
     await botTrated.save()
     return new Bot(botElement, false)
+  }
+
+  async vote (id: string, userId: string): Promise<Bot | null> {
+    const user = await this.userService.findById(userId)
+    const next = user.dates.nextVote
+    const now = new Date()
+    if (next > now) {
+      throw new TimeError(next)
+    }
+
+    const bot = await this.BotModel.findById(id).exec()
+    if (bot === null) {
+      return null
+    }
+
+    bot.votes.current += 1
+    bot.votes.voteslog.push(userId)
+
+    await this.userService.updateNextVote(now, userId)
+
+    return new Bot(await bot.save(), true)
   }
 
   async delete (id: string): Promise<boolean> {

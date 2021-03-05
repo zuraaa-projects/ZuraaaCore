@@ -4,11 +4,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
-import { User } from 'src/modules/users/schemas/User.schema'
+import { User } from '../../users/schemas/User.schema'
 import BotCount from './BotCount.schema'
 import BotDate from './BotDate.schema'
 import { BotDetails } from './BotDetails.schema'
 import BotVotes from './BotVotes.schema'
+import BotWebhook from './BotWebHook.schema'
 
 @Schema({
   collection: 'bots'
@@ -25,7 +26,8 @@ export class Bot {
     details,
     approvedBy,
     votes,
-    count
+    count,
+    webhook
   }: any, showVotes: boolean) {
     this._id = _id
     this.username = username
@@ -38,6 +40,7 @@ export class Bot {
     this.approvedBy = approvedBy
     this.votes = new BotVotes(votes, showVotes)
     this.count = new BotCount(count)
+    this.webhook = new BotWebhook(webhook)
   }
 
   @Prop({
@@ -93,6 +96,9 @@ export class Bot {
 
   @Prop(BotCount)
   count: BotCount
+
+  @Prop(BotWebhook)
+  webhook: BotWebhook
 }
 
 export type BotStatus = 'dnd' | 'idle' | 'offline' | 'online' | 'streaming'

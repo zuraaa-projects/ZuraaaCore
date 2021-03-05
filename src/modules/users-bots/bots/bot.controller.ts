@@ -1,15 +1,16 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put } from '@nestjs/common'
 import { Body, Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
-import { BotService } from 'src/modules/bots/bot.service'
 import { SvgCreator } from 'src/utils/svg-creator'
-import { JwtAuthGuard } from '../auth/jwt-auth.guard'
 import { Response } from 'express'
 import _ from 'lodash'
 import { User } from '../users/schemas/User.schema'
-import { RequestUserPayload, RoleLevel } from '../auth/jwt.payload'
 import { Bot } from './schemas/Bot.schema'
-import CreateBotDto from './dtos/created-edited/bot.dto'
 import FindBot from './interfaces/FindBot'
+import TimeError from './exceptions/TimeError'
+import { BotService } from './bot.service'
+import { RequestUserPayload, RoleLevel } from 'src/modules/auth/jwt.payload'
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
+import CreateBotDto from './dtos/created-edited/bot.dto'
 
 @Controller('bots')
 export default class BotController {
@@ -92,6 +93,29 @@ export default class BotController {
   @UseGuards(JwtAuthGuard)
   async add (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
     return await this.botService.add(bot, req.user as RequestUserPayload)
+  }
+
+  @Post(':id/votes')
+  @UseGuards(JwtAuthGuard)
+  async vote (@Param('id') id: string, @Req() req: Express.Request): Promise<Bot> {
+    try {
+      const { userId } = req.user as RequestUserPayload
+      const bot = await this.botService.vote(id, userId)
+      if (bot !== null) {
+        return bot
+      } else {
+        throw new HttpException('Bot not found', HttpStatus.NOT_FOUND)
+      }
+    } catch (error) {
+      if (error instanceof TimeError) {
+        throw new HttpException({
+          reason: 'You need to wait 8 hours to vote again',
+          nextVote: error.next.toISOString()
+        }, HttpStatus.TOO_MANY_REQUESTS)
+      } else {
+        throw error
+      }
+    }
   }
 
   @Put()

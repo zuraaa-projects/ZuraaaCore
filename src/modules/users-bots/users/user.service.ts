@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import DiscordUser from 'src/extension-modules/discord/interfaces/DiscordUser'
+import { AvatarService } from 'src/modules/avatars/avatar.service'
 import { updateDiscordData } from 'src/utils/discord-update-data'
-import { AvatarService } from '../avatars/avatar.service'
 import UserDto from './dtos/edit-user/user.dto'
 import { User, UserDocument } from './schemas/User.schema'
 
@@ -62,6 +62,16 @@ export class UserService {
     }
     discordUserDb.details.description = user.bio
     return new User(await discordUserDb.save())
+  }
+
+  async updateNextVote (now: Date, userId: string): Promise<User> {
+    const user = await this.UserModel.findById(userId)
+    if (user === null) {
+      throw new Error('Fail to get user')
+    }
+    now.setHours(now.getHours() + 8)
+    user.dates.nextVote = now
+    return await user.save()
   }
 
   async findById (id: string): Promise<User> {
