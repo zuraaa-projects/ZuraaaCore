@@ -9,7 +9,7 @@ import BotCount from './BotCount.schema'
 import BotDate from './BotDate.schema'
 import { BotDetails } from './BotDetails.schema'
 import BotVotes from './BotVotes.schema'
-import BotWebhook from './BotWebHook.schema'
+import BotWebhook from './BotWebhook.schema'
 
 @Schema({
   collection: 'bots'
