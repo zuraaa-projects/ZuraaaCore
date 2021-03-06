@@ -1,4 +1,4 @@
-import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize, IsOptional } from 'class-validator'
+import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize, IsOptional, IsUrl } from 'class-validator'
 import { AppLibrary, BotsTags } from '../../enums/details.enums'
 
 export default class DetailsBotDto {
@@ -42,4 +42,13 @@ export default class DetailsBotDto {
     each: true
   })
   otherOwners!: string[]
+
+  @IsOptional()
+  @MaxLength(2083)
+  @IsUrl()
+  donate!: string
+
+  @IsOptional()
+  @MaxLength(100)
+  github!: string
 }

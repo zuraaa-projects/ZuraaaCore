@@ -20,7 +20,9 @@ export class BotDetails {
     isHTML,
     website,
     otherOwners,
-    customURL
+    customURL,
+    donate,
+    github
   }: any) {
     this.prefix = prefix
     this.tags = tags
@@ -34,6 +36,8 @@ export class BotDetails {
     this.isHTML = isHTML
     this.otherOwners = otherOwners
     this.customURL = customURL
+    this.donate = donate
+    this.github = github
   }
 
   @Prop({
@@ -98,4 +102,14 @@ export class BotDetails {
     index: true
   })
   customURL: string
+
+  @Prop({
+    maxlength: 2083
+  })
+  donate: string
+
+  @Prop({
+    maxlength: 100
+  })
+  github: string
 }
