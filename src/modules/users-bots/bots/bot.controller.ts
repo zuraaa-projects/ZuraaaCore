@@ -1,20 +1,32 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put } from '@nestjs/common'
-import { Body, Query, Req } from '@nestjs/common/decorators/http/route-params.decorator'
+import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put, UseInterceptors } from '@nestjs/common'
+import { Body, Query, Req, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator'
 import { SvgCreator } from 'src/utils/svg-creator'
 import { Response } from 'express'
 import _ from 'lodash'
 import { User } from '../users/schemas/User.schema'
 import { Bot } from './schemas/Bot.schema'
-import FindBot from './interfaces/FindBot'
+import FindBot from './interfaces/find-bot'
 import TimeError from './exceptions/TimeError'
 import { BotService } from './bot.service'
 import { RequestUserPayload, RoleLevel } from 'src/modules/auth/jwt.payload'
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
 import CreateBotDto from './dtos/created-edited/bot.dto'
+import { BotReport } from './dtos/report/bot-report'
+import { UserService } from '../users/user.service'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import { FileFieldsInterceptor } from '@nestjs/platform-express'
+import { ReportService } from 'src/extension-modules/report/report.service'
+import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
+import UploadFiles from './interfaces/upload-files'
 
 @Controller('bots')
 export default class BotController {
-  constructor (private readonly botService: BotService) {}
+  constructor (
+    private readonly botService: BotService,
+    private readonly userService: UserService,
+    private readonly discordBotService: DiscordBotService,
+    private readonly reportService: ReportService
+  ) {}
 
   @Get(':id')
   async show (@Param('id') id: string): Promise<Bot> {
@@ -104,7 +116,7 @@ export default class BotController {
       if (bot !== null) {
         return bot
       } else {
-        throw new HttpException('Bot not found', HttpStatus.NOT_FOUND)
+        throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
       if (error instanceof TimeError) {
@@ -115,6 +127,47 @@ export default class BotController {
       } else {
         throw error
       }
+    }
+  }
+
+  @Post(':id/reports')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'files', maxCount: 5 }
+  ]))
+  @UseGuards(JwtAuthGuard)
+  async report (@Param('id') id: string, @Body() report: BotReport, @Req() req: Express.Request, @UploadedFiles() files: UploadFiles): Promise<void> {
+    const { userId } = req.user as RequestUserPayload
+    const bot = await this.botService.findById(id)
+
+    if (bot === null) {
+      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+    }
+    const user = await this.userService.findById(userId)
+    let filesPath: ReportPath[] = []
+    if (!_.isEmpty(files)) {
+      try {
+        filesPath = await this.reportService.writeReport(files.files, bot._id)
+      } catch (error) {
+        throw new HttpException('Fail to save files', HttpStatus.INTERNAL_SERVER_ERROR)
+      }
+    }
+
+    try {
+      await this.discordBotService.sendReport(report, filesPath, bot, user)
+    } catch (error) {
+      throw new HttpException('Fail send message', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  @Get(':id/reports/:fileName')
+  @Header('Cache-Control', 'public, max-age=31536000, immutable, only-if-cached')
+  async getReport (@Param('id') id: string, @Param('fileName') fileName: string, @Res() res: Response): Promise<void> {
+    try {
+      const image = await this.reportService.readReport(id, fileName)
+      res.contentType(image.type)
+      res.send(image.data)
+    } catch (error) {
+      throw new HttpException('Report not found', HttpStatus.NOT_FOUND)
     }
   }
 

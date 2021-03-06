@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import Axios, { AxiosInstance } from 'axios'
+import _ from 'lodash'
 import NodeCache from 'node-cache'
+import { BotReport } from 'src/modules/users-bots/bots/dtos/report/bot-report'
+import { Bot } from 'src/modules/users-bots/bots/schemas/Bot.schema'
+import { User } from 'src/modules/users-bots/users/schemas/User.schema'
 import { discord } from '../../../config.json'
+import { ReportPath } from '../report/interfaces/ReportPath'
 import DiscordUser from './interfaces/DiscordUser'
 
 @Injectable()
@@ -54,5 +59,44 @@ export class DiscordBotService {
     })
 
     return userDiscord as DiscordUser
+  }
+
+  async sendReport (botReport: BotReport, files: ReportPath[], bot: Bot, user: User): Promise<void> {
+    const fields = [
+      {
+        name: 'Enviado por:',
+        value: `${user.username}#${user.discriminator} (${user._id})`,
+        inline: true
+      },
+      {
+        name: 'Tópico:',
+        value: botReport.topic,
+        inline: true
+      },
+      {
+        name: 'Motivo:',
+        value: botReport.reason
+      }
+    ]
+
+    if (!_.isEmpty(files)) {
+      const url = discord.api.baseUrl + `/api/bots/${bot._id}/reports/`
+
+      fields.push({
+        name: 'Arquivos',
+        value: files.reduce((result, value) => result + `[Reporte-${value.id}](${url + value.fileName})\n`, '')
+      })
+    }
+
+    await this.api.post(`/channels/${discord.channels.logReport}/messages`, {
+      embed: {
+        title: `Denúncia contra ${bot.username}#${bot.discriminator}`,
+        color: 0xff0000,
+        fields: fields,
+        footer: {
+          text: `ID: ${bot._id}`
+        }
+      }
+    })
   }
 }

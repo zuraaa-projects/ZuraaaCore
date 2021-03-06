@@ -11,6 +11,12 @@
         },
         "bot": {
             "token": "token do bot discord"
+        },
+        "channels": {
+          "logReport": "id do channel que sera enviado os reports"
+        },
+        "api": {
+          "baseUrl": "url base da api para o bot usar"
         }
     },
     "jwt": {

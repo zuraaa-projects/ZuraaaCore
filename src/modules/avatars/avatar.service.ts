@@ -6,7 +6,7 @@ import Image from './interfaces/Image'
 
 @Injectable()
 export class AvatarService implements OnModuleInit {
-  readonly cachePath = join(process.cwd(), 'cache/avatars')
+  readonly cachePath = join(process.cwd(), 'cache', 'avatars')
 
   onModuleInit (): void {
     stat(this.cachePath, (err) => {

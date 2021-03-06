@@ -23,6 +23,10 @@ export class BotService {
     private readonly userService: UserService
   ) {}
 
+  async findById (id: string): Promise<BotDocument | null> {
+    return await this.BotModel.findById(id).exec()
+  }
+
   async getBotsByOwner (owner: User): Promise<Bot[]> {
     const bots = await this.BotModel.find({
       $or: [
