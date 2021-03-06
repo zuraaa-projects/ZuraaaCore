@@ -133,9 +133,13 @@ export default class BotController {
   @Post(':id/reports')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'files', maxCount: 5 }
-  ]))
+  ], {
+    limits: {
+      fileSize: 10485760
+    }
+  }))
   @UseGuards(JwtAuthGuard)
-  async report (@Param('id') id: string, @Body() report: BotReport, @Req() req: Express.Request, @UploadedFiles() files: UploadFiles): Promise<void> {
+  async report (@Param('id') id: string, @Body() report: BotReport, @Req() req: Express.Request, @UploadedFiles() files: UploadFiles): Promise<{ bot: Bot, reports: string[] }> {
     const { userId } = req.user as RequestUserPayload
     const bot = await this.botService.findById(id)
 
@@ -156,6 +160,11 @@ export default class BotController {
       await this.discordBotService.sendReport(report, filesPath, bot, user)
     } catch (error) {
       throw new HttpException('Fail send message', HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    return {
+      bot: new Bot(bot, false, false),
+      reports: filesPath.map(x => x.fileName)
     }
   }
 
