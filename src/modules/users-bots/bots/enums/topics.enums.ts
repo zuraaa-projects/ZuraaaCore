@@ -4,5 +4,5 @@ export enum ReportTopic {
   massDM = 'MassDM',
   botDeBaixaQualidade = 'Bot de baixa qualidade',
   vazamentoDeToken = 'Vazamento de Token',
-  outre = 'Outro'
+  outro = 'Outro'
 }
