@@ -89,6 +89,7 @@ export class DiscordBotService {
     }
 
     await this.api.post(`/channels/${discord.channels.logReport}/messages`, {
+      content: `<@&${discord.roles.admRole}>`,
       embed: {
         title: `Denúncia contra ${bot.username}#${bot.discriminator}`,
         color: 0xff0000,
