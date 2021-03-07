@@ -4,6 +4,7 @@ import { mkdir, readdir, readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
 import Image from './interfaces/Image'
 import { ReportPath } from './interfaces/ReportPath'
+import mime from 'mime-types'
 
 @Injectable()
 export class ReportService implements OnModuleInit {
@@ -36,10 +37,9 @@ export class ReportService implements OnModuleInit {
 
     for (let i = 0; i < files.length; i++) {
       const x = files[i]
-      const fileType = x.mimetype.split('/')[1]
-      const fileName = `report-${reportNumber}.${fileType}`
+      const fileType = mime.extension(x.mimetype)
+      const fileName = `report-${reportNumber}.${fileType as string}`
       const fullPath = join(folder, fileName)
-      reportNumber += 1
 
       await writeFile(fullPath, x.buffer)
 
@@ -47,6 +47,8 @@ export class ReportService implements OnModuleInit {
         id: reportNumber,
         fileName: fileName
       })
+
+      reportNumber += 1
     }
 
     return filesPath

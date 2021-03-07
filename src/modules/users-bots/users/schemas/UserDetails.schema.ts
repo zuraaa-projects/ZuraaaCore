@@ -6,9 +6,9 @@ import { Prop, Schema } from '@nestjs/mongoose'
 
 @Schema()
 export default class UserDetails {
-  constructor ({ description, role, customURL }: any) {
+  constructor ({ description, role, customURL }: any, showRole: boolean) {
     this.description = description
-    this.role = role
+    this.role = (showRole) ? role : undefined
     this.customURL = customURL
   }
 

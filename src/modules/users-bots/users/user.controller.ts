@@ -17,7 +17,7 @@ export default class UserController {
   async showMe (@Req() req: Express.Request): Promise<User> {
     const { userId } = req.user as RequestUserPayload
 
-    const returnData = await this.userService.show(userId)
+    const returnData = await this.userService.show(userId, false)
 
     if (returnData === undefined || _.isEmpty(returnData)) {
       throw new HttpException('Could not validate the User or Discord Service is unstable', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -28,7 +28,7 @@ export default class UserController {
 
   @Get(':id')
   async show (@Param('id') id: string): Promise<User> {
-    const user = await this.userService.show(id)
+    const user = await this.userService.show(id, false)
 
     if (user === undefined || _.isEmpty(user)) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
@@ -39,7 +39,7 @@ export default class UserController {
 
   @Get(':id/bots')
   async getBots (@Param('id') id: string): Promise<Bot[]> {
-    const user = await this.userService.show(id)
+    const user = await this.userService.show(id, false)
 
     if (user === undefined || _.isEmpty(user)) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)

@@ -18,13 +18,13 @@ export class User {
     avatar,
     dates,
     details
-  }: any) {
+  }: any, showRole: boolean) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
     this.avatar = avatar
     this.dates = dates
-    this.details = new UserDetails(details)
+    this.details = new UserDetails(details, showRole)
   }
 
   @Prop()

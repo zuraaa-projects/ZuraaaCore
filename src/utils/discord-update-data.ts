@@ -16,7 +16,8 @@ export interface BaseDiscordSchema {
 export async function updateDiscordData<Doc extends Document> (
   doc: Doc & BaseDiscordSchema,
   discordService: DiscordBotService | DiscordUser,
-  avatarService: AvatarService
+  avatarService: AvatarService,
+  getError = false
 ): Promise<Doc | undefined> {
   try {
     let discordUser: DiscordUser | undefined
@@ -47,7 +48,10 @@ export async function updateDiscordData<Doc extends Document> (
 
     return await doc.save()
   } catch (err) {
-    console.error(err)
+    if (getError) {
+      return undefined
+    }
+
     return doc
   }
 }

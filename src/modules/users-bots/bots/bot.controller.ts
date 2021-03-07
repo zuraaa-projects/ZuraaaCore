@@ -104,7 +104,16 @@ export default class BotController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async add (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
-    return await this.botService.add(bot, req.user as RequestUserPayload)
+    try {
+      const botResult = await this.botService.add(bot, req.user as RequestUserPayload)
+      if (botResult === null) {
+        throw new HttpException('The bot already exists', HttpStatus.AMBIGUOUS)
+      } else {
+        return botResult
+      }
+    } catch (error) {
+      throw new HttpException('Discord returned invalid data', HttpStatus.BAD_REQUEST)
+    }
   }
 
   @Post(':id/votes')

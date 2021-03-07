@@ -114,18 +114,21 @@ export class BotService {
     return botsFormated
   }
 
-  async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot> {
-    const botElement = new this.BotModel(bot)
+  async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot | null> {
+    let botElement = await this.BotModel.findById(bot._id).exec()
+    if (botElement !== null) {
+      return null
+    }
+    botElement = new this.BotModel(bot)
     botElement.owner = userPayload.userId
     const { isHTML, longDescription } = bot.details
     if (!_.isEmpty(longDescription)) {
       botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
     }
-    const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService)
+    const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService, true)
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
     }
-    await botTrated.save()
     return new Bot(botElement, false, false)
   }
 

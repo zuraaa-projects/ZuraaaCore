@@ -21,7 +21,7 @@ export class UserService {
     return await userCreated.save()
   }
 
-  async show (id: string): Promise<User | undefined> {
+  async show (id: string, showRole: boolean): Promise<User | undefined> {
     const result = await this.UserModel.findOne({
       $or: [
         {
@@ -35,20 +35,20 @@ export class UserService {
     if (result === null) {
       return
     }
-    return new User(await updateDiscordData(result, this.discordService, this.avatarService))
+    return new User(await updateDiscordData(result, this.discordService, this.avatarService), showRole)
   }
 
   async login (user: DiscordUser): Promise<User> {
     const findUser = await this.UserModel.findById(user.id).exec()
     if (findUser !== null) {
-      return new User(await updateDiscordData(findUser, user, this.avatarService))
+      return new User(await updateDiscordData(findUser, user, this.avatarService), true)
     }
 
     const userData = new this.UserModel({
       _id: user.id
     })
 
-    return new User(await updateDiscordData(userData, user, this.avatarService))
+    return new User(await updateDiscordData(userData, user, this.avatarService), true)
   }
 
   async update (user: UserDto, id: string): Promise<User | undefined> {
@@ -61,7 +61,7 @@ export class UserService {
       return
     }
     discordUserDb.details.description = user.bio
-    return new User(await discordUserDb.save())
+    return new User(await discordUserDb.save(), false)
   }
 
   async updateNextVote (now: Date, userId: string): Promise<User> {
@@ -75,6 +75,6 @@ export class UserService {
   }
 
   async findById (id: string): Promise<User> {
-    return new User(await this.UserModel.findById(id).exec())
+    return new User(await this.UserModel.findById(id).exec(), false)
   }
 }

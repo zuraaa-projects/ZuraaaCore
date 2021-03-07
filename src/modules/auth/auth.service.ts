@@ -20,7 +20,7 @@ export class AuthService {
   }
 
   async getUser (id: string): Promise<User> {
-    const userDb = await this.userService.show(id)
+    const userDb = await this.userService.show(id, true)
 
     if (userDb === undefined) {
       throw new HttpException('User undefined', HttpStatus.BAD_REQUEST)
@@ -29,13 +29,15 @@ export class AuthService {
     return userDb
   }
 
-  async login (user: User): Promise<{ access_token: string }> {
+  async login (user: User): Promise<{ access_token: string, role: number }> {
     const payload: JwtPayload = {
-      role: user.details.role,
+      role: (user.details.role !== undefined) ? user.details.role : 0,
       sub: user._id
     }
+
     return {
-      access_token: this.jwtService.sign(payload)
+      access_token: this.jwtService.sign(payload),
+      role: (user.details.role !== undefined) ? user.details.role : 0
     }
   }
 }

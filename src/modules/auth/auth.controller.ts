@@ -12,7 +12,7 @@ export default class AuthController {
     type: string
     identify: string
     data: string
-  }): Promise<{ access_token: string }> {
+  }): Promise<{ access_token: string, role: number }> {
     if (!jwt.authorized_clients.some(x => x.secret === data.identify && x.type === data.type)) {
       throw new HttpException('The application is not authorized to use this endpoint.', HttpStatus.UNAUTHORIZED)
     }
