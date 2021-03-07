@@ -80,7 +80,7 @@ export class DiscordBotService {
     ]
 
     if (!_.isEmpty(files)) {
-      const url = discord.api.baseUrl + `/api/bots/${bot._id}/reports/`
+      const url = discord.api.baseUrl + `/bots/${bot._id}/reports/`
 
       fields.push({
         name: 'Arquivos',
