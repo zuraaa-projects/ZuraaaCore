@@ -79,7 +79,7 @@ export default class BotController {
         return (
           await this.botService
             .showAll('', 'mostVoted', 1, 6)
-        ).map(bot => new Bot(bot, false, false))
+        ).map(bot => new Bot(bot, false, false, false))
       default: {
         let page = Number(query.page)
         const tags = query.tags?.split(',')
@@ -96,7 +96,7 @@ export default class BotController {
 
         return (
           bots
-        ).map(bot => new Bot(bot, false, false))
+        ).map(bot => new Bot(bot, false, false, false))
       }
     }
   }
@@ -104,15 +104,16 @@ export default class BotController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async add (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
+    let botResult
     try {
-      const botResult = await this.botService.add(bot, req.user as RequestUserPayload)
-      if (botResult === null) {
-        throw new HttpException('The bot already exists', HttpStatus.AMBIGUOUS)
-      } else {
-        return botResult
-      }
+      botResult = await this.botService.add(bot, req.user as RequestUserPayload)
     } catch (error) {
       throw new HttpException('Discord returned invalid data', HttpStatus.BAD_REQUEST)
+    }
+    if (botResult === null) {
+      throw new HttpException('The bot already exists', HttpStatus.AMBIGUOUS)
+    } else {
+      return botResult
     }
   }
 
@@ -172,7 +173,7 @@ export default class BotController {
     }
 
     return {
-      bot: new Bot(bot, false, false),
+      bot: new Bot(bot, false, false, false),
       reports: filesPath.map(x => x.fileName)
     }
   }

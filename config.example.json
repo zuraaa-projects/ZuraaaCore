@@ -13,10 +13,12 @@
             "token": "token do bot discord"
         },
         "channels": {
-          "logReport": "id do channel que sera enviado os reports"
+          "logReport": "id do channel que sera enviado os reports",
+          "logVote": "id do channel que sera enviado os votos"
         },
-        "api": {
-          "baseUrl": "url base da api para o bot usar"
+        "url": {
+          "apiBaseUrl": "url base da api para o bot usar",
+          "siteBaseUrl": "url base do site para o bot usar"
         },
         "roles": {
           "admRole": "cargo de adm pra ser notificado"

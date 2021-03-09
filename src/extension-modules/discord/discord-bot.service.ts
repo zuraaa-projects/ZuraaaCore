@@ -80,7 +80,7 @@ export class DiscordBotService {
     ]
 
     if (!_.isEmpty(files)) {
-      const url = discord.api.baseUrl + `/bots/${bot._id}/reports/`
+      const url = discord.url.apiBaseUrl + `/bots/${bot._id}/reports/`
 
       fields.push({
         name: 'Arquivos',
@@ -101,5 +101,12 @@ export class DiscordBotService {
     }
 
     await this.api.post(`/channels/${discord.channels.logReport}/messages`, embed)
+  }
+
+  async sendVote (user: User, bot: Bot): Promise<void> {
+    await this.api.post(`/channels/${discord.channels.logVote}/messages`, {
+      content: `${user.username}#${user.discriminator} (${user._id}) votou no bot \`${bot.username}#${bot.discriminator}\`\n` +
+        `${discord.url.siteBaseUrl}/bots/${(bot.details.customURL !== null) ? bot.details.customURL : bot._id}`
+    })
   }
 }

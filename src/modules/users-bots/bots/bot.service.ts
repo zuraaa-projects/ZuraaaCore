@@ -41,7 +41,7 @@ export class BotService {
     const botsFormated: Bot[] = []
 
     for (const bot of bots) {
-      botsFormated.push(new Bot(bot, false, false))
+      botsFormated.push(new Bot(bot, false, false, false))
     }
 
     return botsFormated
@@ -73,17 +73,17 @@ export class BotService {
       return
     }
 
-    const bot = new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, showWebhook)
+    // const bot =
 
-    if (ownerData) {
-      bot.owner = new User(result.owner, false)
+    // if (ownerData) {
+    //   bot.owner = new User(result.owner, false)
 
-      bot.details.otherOwners = result.details.otherOwners.map((x: User | string) => {
-        return new User(x, false)
-      })
-    }
+    //   bot.details.otherOwners = result.details.otherOwners.map((x: User | string) => {
+    //     return new User(x, false)
+    //   })
+    // }
 
-    return bot
+    return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, showWebhook, ownerData)
   }
 
   async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18, tags: string[] | undefined = undefined): Promise<Bot[]> {
@@ -122,7 +122,7 @@ export class BotService {
     const botsFormated: Bot[] = []
 
     for (const bot of bots) {
-      botsFormated.push(new Bot(bot, false, false))
+      botsFormated.push(new Bot(bot, false, false, false))
     }
     return botsFormated
   }
@@ -142,7 +142,7 @@ export class BotService {
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
     }
-    return new Bot(botElement, false, false)
+    return new Bot(botElement, false, false, false)
   }
 
   async vote (id: string, userId: string): Promise<Bot | null> {
@@ -163,7 +163,13 @@ export class BotService {
 
     await this.userService.updateNextVote(now, userId)
 
-    return new Bot(await bot.save(), false, false)
+    try {
+      await this.discordService.sendVote(user, bot)
+    } catch {
+
+    }
+
+    return new Bot(await bot.save(), true, false, false)
   }
 
   async delete (id: string): Promise<boolean> {
@@ -211,6 +217,6 @@ export class BotService {
     botDb.details.website = bot.details.website
     botDb.details.otherOwners = bot.details.otherOwners
 
-    return new Bot(await botDb.save(), false, false)
+    return new Bot(await botDb.save(), false, false, false)
   }
 }

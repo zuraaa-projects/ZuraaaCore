@@ -24,7 +24,7 @@ export class BotDetails {
     customURL,
     donate,
     github
-  }: any) {
+  }: any, userData: boolean) {
     this.prefix = prefix
     this.tags = tags
     this.library = library
@@ -35,7 +35,13 @@ export class BotDetails {
     this.supportServer = supportServer
     this.website = website
     this.isHTML = isHTML
-    this.otherOwners = otherOwners
+    if (userData) {
+      this.otherOwners = otherOwners.map((x: User) => {
+        return new User(x, false)
+      })
+    } else {
+      this.otherOwners = otherOwners
+    }
     this.customURL = customURL
     this.donate = donate
     this.github = github

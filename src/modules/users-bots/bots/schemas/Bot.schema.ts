@@ -25,17 +25,16 @@ export class Bot {
     details,
     approvedBy,
     votes,
-    count,
     webhook
-  }: any, showVotes: boolean, showWebhook: boolean) {
+  }: any, showVotes: boolean, showWebhook: boolean, userData: boolean) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
     this.avatar = avatar
     this.status = status
-    this.owner = owner
+    this.owner = (userData) ? new User(owner, false) : owner
     this.dates = new BotDate(dates)
-    this.details = new BotDetails(details)
+    this.details = new BotDetails(details, userData)
     this.approvedBy = approvedBy
     this.votes = new BotVotes(votes, showVotes)
     this.webhook = new BotWebhook(webhook, showWebhook)

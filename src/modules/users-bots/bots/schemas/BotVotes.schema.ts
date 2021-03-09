@@ -18,6 +18,9 @@ export default class BotVotes {
   })
   current: number
 
-  @Prop([String])
+  @Prop({
+    type: [String],
+    default: []
+  })
   voteslog: string[]
 }
