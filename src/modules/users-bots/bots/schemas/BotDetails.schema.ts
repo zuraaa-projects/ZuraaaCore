@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Prop, Schema } from '@nestjs/mongoose'
+import { User } from '../../users/schemas/User.schema'
 import { AppLibrary, BotsTags } from '../enums/details.enums'
 
 @Schema({
@@ -57,9 +58,11 @@ export class BotDetails {
   library: AppLibrary
 
   @Prop({
-    maxlength: 255
+    maxlength: 255,
+    default: null,
+    type: String
   })
-  customInviteLink: string
+  customInviteLink: string | null
 
   @Prop({
     required: true,
@@ -85,23 +88,32 @@ export class BotDetails {
   isHTML!: boolean
 
   @Prop({
-    maxlength: 10
+    maxlength: 10,
+    default: null,
+    type: String
   })
-  supportServer: string
-
-  @Prop({
-    maxlength: 255
-  })
-  website: string
-
-  @Prop([String])
-  otherOwners: string[]
+  supportServer: string | null
 
   @Prop({
     maxlength: 255,
-    index: true
+    default: null,
+    type: String
   })
-  customURL: string
+  website: string | null
+
+  @Prop([{
+    type: String,
+    ref: 'User'
+  }])
+  otherOwners: string[] | User[]
+
+  @Prop({
+    maxlength: 255,
+    index: true,
+    default: null,
+    type: String
+  })
+  customURL: string | null
 
   @Prop({
     maxlength: 2083

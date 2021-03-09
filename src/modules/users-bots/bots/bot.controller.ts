@@ -1,23 +1,23 @@
 import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put, UseInterceptors } from '@nestjs/common'
 import { Body, Query, Req, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator'
-import { SvgCreator } from 'src/utils/svg-creator'
-import { Response } from 'express'
-import _ from 'lodash'
-import { User } from '../users/schemas/User.schema'
-import { Bot } from './schemas/Bot.schema'
-import FindBot from './interfaces/find-bot'
-import TimeError from './exceptions/TimeError'
-import { BotService } from './bot.service'
+import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
 import { RequestUserPayload, RoleLevel } from 'src/modules/auth/jwt.payload'
+import { ReportService } from 'src/extension-modules/report/report.service'
+import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { BotReport } from './dtos/report/bot-report'
-import { UserService } from '../users/user.service'
-import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
-import { FileFieldsInterceptor } from '@nestjs/platform-express'
-import { ReportService } from 'src/extension-modules/report/report.service'
-import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
+import { User } from '../users/schemas/User.schema'
 import UploadFiles from './interfaces/upload-files'
+import { UserService } from '../users/user.service'
+import { SvgCreator } from 'src/utils/svg-creator'
+import TimeError from './exceptions/TimeError'
+import FindBot from './interfaces/find-bot'
+import { Bot } from './schemas/Bot.schema'
+import { BotService } from './bot.service'
+import { Response } from 'express'
+import _ from 'lodash'
 
 @Controller('bots')
 export default class BotController {
@@ -30,7 +30,7 @@ export default class BotController {
 
   @Get(':id')
   async show (@Param('id') id: string): Promise<Bot> {
-    const bot = await this.botService.show(id, true)
+    const bot = await this.botService.show(id, true, true)
     if (bot === undefined || _.isEmpty(bot)) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }

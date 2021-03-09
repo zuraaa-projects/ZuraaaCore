@@ -12,10 +12,10 @@ export default class BotWebhook {
     type,
     lastError
   }: any, showWebhook: boolean) {
-    this.authorization = authorization
-    this.url = url
-    this.type = type
-    this.lastError = lastError
+    this.authorization = (showWebhook) ? authorization : undefined
+    this.url = (showWebhook) ? url : undefined
+    this.type = (showWebhook) ? type : undefined
+    this.lastError = (showWebhook) ? lastError : undefined
   }
 
   @Prop()

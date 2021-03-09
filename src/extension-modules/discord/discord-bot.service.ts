@@ -88,7 +88,7 @@ export class DiscordBotService {
       })
     }
 
-    await this.api.post(`/channels/${discord.channels.logReport}/messages`, {
+    const embed = {
       content: `<@&${discord.roles.admRole}>`,
       embed: {
         title: `Denúncia contra ${bot.username}#${bot.discriminator}`,
@@ -98,6 +98,8 @@ export class DiscordBotService {
           text: `ID: ${bot._id}`
         }
       }
-    })
+    }
+
+    await this.api.post(`/channels/${discord.channels.logReport}/messages`, embed)
   }
 }

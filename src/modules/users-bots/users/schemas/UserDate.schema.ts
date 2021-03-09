@@ -8,9 +8,15 @@ export default class UserDate {
   })
   firstSeen!: Date
 
-  @Prop()
-  lastBotAdd!: Date
+  @Prop({
+    type: Date,
+    default: null
+  })
+  lastBotAdd!: Date | null
 
-  @Prop()
-  nextVote!: Date
+  @Prop({
+    type: Date,
+    default: null
+  })
+  nextVote!: Date | null
 }

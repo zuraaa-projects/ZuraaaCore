@@ -5,6 +5,7 @@ import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.ser
 import DiscordUser from 'src/extension-modules/discord/interfaces/DiscordUser'
 import { AvatarService } from 'src/modules/avatars/avatar.service'
 import { getImageUrl } from './get-image-url'
+import mime from 'mime-types'
 
 export interface BaseDiscordSchema {
   avatar: string
@@ -35,9 +36,9 @@ export async function updateDiscordData<Doc extends Document> (
         responseType: 'arraybuffer'
       })
 
-      const extension = response.headers['content-type'].split('/')[1]
+      const extension = mime.extension(response.headers['content-type'])
 
-      await avatarService.writeAvatar(doc._id, extension, response.data)
+      await avatarService.writeAvatar(doc._id, extension as string, response.data)
 
       doc.avatar = discordUser.avatar
     }

@@ -5,7 +5,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
 import { User } from '../../users/schemas/User.schema'
-import BotCount from './BotCount.schema'
 import BotDate from './BotDate.schema'
 import { BotDetails } from './BotDetails.schema'
 import BotVotes from './BotVotes.schema'
@@ -39,7 +38,6 @@ export class Bot {
     this.details = new BotDetails(details)
     this.approvedBy = approvedBy
     this.votes = new BotVotes(votes, showVotes)
-    this.count = new BotCount(count)
     this.webhook = new BotWebhook(webhook, showWebhook)
   }
 
@@ -94,10 +92,10 @@ export class Bot {
   @Prop(BotVotes)
   votes: BotVotes
 
-  @Prop(BotCount)
-  count: BotCount
-
-  @Prop(BotWebhook)
+  @Prop({
+    type: BotWebhook,
+    default: {}
+  })
   webhook: BotWebhook
 }
 

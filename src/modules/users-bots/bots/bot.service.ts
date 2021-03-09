@@ -51,7 +51,7 @@ export class BotService {
     return await this.BotModel.countDocuments()
   }
 
-  async show (id: string, voteLog = false, ownerData = false): Promise<Bot | undefined> {
+  async show (id: string, voteLog = false, ownerData = false, showWebhook = false): Promise<Bot | undefined> {
     let query = this.BotModel.findOne({
       $or: [
         {
@@ -63,14 +63,27 @@ export class BotService {
       ]
     })
     if (ownerData) {
-      query = query.populate('owner')
+      query = query
+        .populate('owner')
+        .populate('details.otherOwners')
     }
     const result = await query.exec()
 
     if (result === null) {
       return
     }
-    return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, false)
+
+    const bot = new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, showWebhook)
+
+    if (ownerData) {
+      bot.owner = new User(result.owner, false)
+
+      bot.details.otherOwners = result.details.otherOwners.map((x: User | string) => {
+        return new User(x, false)
+      })
+    }
+
+    return bot
   }
 
   async showAll (pesquisa: string, sort = 'recent', pagina = 1, limite = 18, tags: string[] | undefined = undefined): Promise<Bot[]> {
@@ -136,7 +149,7 @@ export class BotService {
     const user = await this.userService.findById(userId)
     const next = user.dates.nextVote
     const now = new Date()
-    if (next > now) {
+    if ((next != null) && next > now) {
       throw new TimeError(next)
     }
 

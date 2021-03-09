@@ -12,8 +12,11 @@ export default class UserDetails {
     this.customURL = customURL
   }
 
-  @Prop()
-  description: string
+  @Prop({
+    type: String,
+    default: null
+  })
+  description: string | null
 
   @Prop({
     default: 0
@@ -22,7 +25,9 @@ export default class UserDetails {
 
   @Prop({
     maxlength: 255,
-    index: true
+    index: true,
+    default: null,
+    type: String
   })
-  customURL: string
+  customURL: string | null
 }
