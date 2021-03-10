@@ -37,7 +37,7 @@ export class Bot {
     this.details = new BotDetails(details, userData)
     this.approvedBy = approvedBy
     this.votes = new BotVotes(votes, showVotes)
-    this.webhook = new BotWebhook(webhook, showWebhook)
+    this.webhook = (showWebhook) ? new BotWebhook(webhook) : undefined
   }
 
   @Prop({
@@ -95,7 +95,7 @@ export class Bot {
     type: BotWebhook,
     default: {}
   })
-  webhook: BotWebhook
+  webhook: BotWebhook | undefined
 }
 
 export type BotStatus = 'dnd' | 'idle' | 'offline' | 'online' | 'streaming'
