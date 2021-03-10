@@ -18,6 +18,7 @@ import { Bot } from './schemas/Bot.schema'
 import { BotService } from './bot.service'
 import { Response } from 'express'
 import _ from 'lodash'
+import { NotBot } from './exceptions/not-bot'
 
 @Controller('bots')
 export default class BotController {
@@ -51,7 +52,7 @@ export default class BotController {
         throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
       }
     } else {
-      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
   }
 
@@ -80,6 +81,8 @@ export default class BotController {
           await this.botService
             .showAll('', 'mostVoted', 1, 6)
         ).map(bot => new Bot(bot, false, false, false))
+      case 'toapprove':
+        return await this.botService.botsToApprove()
       default: {
         let page = Number(query.page)
         const tags = query.tags?.split(',')
@@ -91,7 +94,7 @@ export default class BotController {
         const bots = await this.botService.showAll(query.search ?? '', 'recent', page, 18, tags)
 
         if (_.isEmpty(bots)) {
-          throw new HttpException('No bot found in the list', HttpStatus.NOT_FOUND)
+          throw new HttpException('No bot found in the list.', HttpStatus.NOT_FOUND)
         }
 
         return (
@@ -108,10 +111,14 @@ export default class BotController {
     try {
       botResult = await this.botService.add(bot, req.user as RequestUserPayload)
     } catch (error) {
-      throw new HttpException('Discord returned invalid data', HttpStatus.BAD_REQUEST)
+      if (error instanceof NotBot) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+      } else {
+        throw new HttpException('Discord returned invalid data.', HttpStatus.BAD_REQUEST)
+      }
     }
     if (botResult === null) {
-      throw new HttpException('The bot already exists', HttpStatus.AMBIGUOUS)
+      throw new HttpException('The bot already exists.', HttpStatus.AMBIGUOUS)
     } else {
       return botResult
     }
@@ -126,12 +133,12 @@ export default class BotController {
       if (bot !== null) {
         return bot
       } else {
-        throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+        throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
       }
     } catch (error) {
       if (error instanceof TimeError) {
         throw new HttpException({
-          reason: 'You need to wait 8 hours to vote again',
+          reason: 'You need to wait 8 hours to vote again.',
           nextVote: error.next.toISOString()
         }, HttpStatus.TOO_MANY_REQUESTS)
       } else {
@@ -154,7 +161,7 @@ export default class BotController {
     const bot = await this.botService.findById(id)
 
     if (bot === null) {
-      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
     const user = await this.userService.findById(userId)
     let filesPath: ReportPath[] = []
@@ -162,14 +169,14 @@ export default class BotController {
       try {
         filesPath = await this.reportService.writeReport(files.files, bot._id)
       } catch (error) {
-        throw new HttpException('Fail to save files', HttpStatus.INTERNAL_SERVER_ERROR)
+        throw new HttpException('Fail to save files.', HttpStatus.INTERNAL_SERVER_ERROR)
       }
     }
 
     try {
       await this.discordBotService.sendReport(report, filesPath, bot, user)
     } catch (error) {
-      throw new HttpException('Fail send message', HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException('Fail send message.', HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     return {
@@ -186,7 +193,7 @@ export default class BotController {
       res.contentType(image.type)
       res.send(image.data)
     } catch (error) {
-      throw new HttpException('Report not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Report not found.', HttpStatus.NOT_FOUND)
     }
   }
 
@@ -203,13 +210,13 @@ export default class BotController {
         if (botUpdate !== undefined) {
           return botUpdate
         } else {
-          throw new HttpException('Fail to update bot', HttpStatus.INTERNAL_SERVER_ERROR)
+          throw new HttpException('Fail to update bot.', HttpStatus.INTERNAL_SERVER_ERROR)
         }
       } else {
         throw new HttpException('You do not have sufficient permission to update this bot.', HttpStatus.UNAUTHORIZED)
       }
     } else {
-      throw new HttpException('Bot was not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
   }
 

@@ -13,6 +13,7 @@ import { UserService } from '../users/user.service'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { Bot, BotDocument } from './schemas/Bot.schema'
 import TimeError from './exceptions/TimeError'
+import { NotBot } from './exceptions/not-bot'
 
 @Injectable()
 export class BotService {
@@ -128,6 +129,12 @@ export class BotService {
   }
 
   async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot | null> {
+    const discordUser = await this.discordService.getUser(bot._id)
+
+    if (!discordUser.bot) {
+      throw new NotBot('The id is not a bot.')
+    }
+
     let botElement = await this.BotModel.findById(bot._id).exec()
     if (botElement !== null) {
       return null
@@ -218,5 +225,13 @@ export class BotService {
     botDb.details.otherOwners = bot.details.otherOwners
 
     return new Bot(await botDb.save(), false, false, false)
+  }
+
+  async botsToApprove (): Promise<Bot[]> {
+    const bots = await this.BotModel.find({
+      approvedBy: null
+    }).exec()
+
+    return bots.map(x => new Bot(x, false, false, false))
   }
 }

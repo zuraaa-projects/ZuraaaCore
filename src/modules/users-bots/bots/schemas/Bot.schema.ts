@@ -84,9 +84,10 @@ export class Bot {
 
   @Prop({
     type: String,
-    ref: 'User'
+    ref: 'User',
+    default: null
   })
-  approvedBy: User | string
+  approvedBy: User | string | null
 
   @Prop(BotVotes)
   votes: BotVotes
