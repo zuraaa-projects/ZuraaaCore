@@ -210,6 +210,13 @@ export class BotService {
       return
     }
 
+    for (let i = 0; i < bot.details.otherOwners.length; i++) {
+      const discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
+      if (discordUser.bot) {
+        throw new NotBot('The otherOwners id is not a user.')
+      }
+    }
+
     const discordBotDb = await updateDiscordData(botDb, this.discordService, this.avatarService)
     if (discordBotDb == null) {
       return

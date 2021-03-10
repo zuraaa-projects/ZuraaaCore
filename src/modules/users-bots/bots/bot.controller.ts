@@ -205,7 +205,15 @@ export default class BotController {
 
     if (botUpdate !== undefined) {
       if (role >= RoleLevel.adm || botUpdate.owner === userId) {
-        botUpdate = await this.botService.update(bot, botUpdate)
+        try {
+          botUpdate = await this.botService.update(bot, botUpdate)
+        } catch (error) {
+          if (error instanceof NotBot) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+          } else {
+            throw error
+          }
+        }
 
         if (botUpdate !== undefined) {
           return botUpdate
