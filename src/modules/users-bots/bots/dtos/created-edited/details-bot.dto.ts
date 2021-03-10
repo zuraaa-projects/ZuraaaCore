@@ -37,10 +37,11 @@ export default class DetailsBotDto {
   @MaxLength(255)
   website!: string
 
-  @IsOptional()
-  @MaxLength(5, {
+  @ArrayMaxSize(5)
+  @MaxLength(18, {
     each: true
   })
+  @IsOptional()
   otherOwners!: string[]
 
   @IsOptional()

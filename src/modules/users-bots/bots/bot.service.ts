@@ -129,10 +129,17 @@ export class BotService {
   }
 
   async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot | null> {
-    const discordUser = await this.discordService.getUser(bot._id)
+    let discordUser = await this.discordService.getUser(bot._id)
 
     if (!discordUser.bot) {
       throw new NotBot('The id is not a bot.')
+    }
+
+    for (let i = 0; i < bot.details.otherOwners.length; i++) {
+      discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
+      if (discordUser.bot) {
+        throw new NotBot('The otherOwners id is not a user.')
+      }
     }
 
     let botElement = await this.BotModel.findById(bot._id).exec()
