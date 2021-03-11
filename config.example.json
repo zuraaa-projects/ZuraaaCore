@@ -14,7 +14,8 @@
         },
         "channels": {
           "logReport": "id do channel que sera enviado os reports",
-          "logVote": "id do channel que sera enviado os votos"
+          "logVote": "id do channel que sera enviado os votos",
+          "logBan": "id do channel que sera enviado os bans"
         },
         "url": {
           "apiBaseUrl": "url base da api para o bot usar",
