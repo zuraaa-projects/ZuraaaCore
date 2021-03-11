@@ -31,7 +31,7 @@ export default class BotController {
 
   @Get(':id')
   async show (@Param('id') id: string): Promise<Bot> {
-    const bot = await this.botService.show(id, true, true)
+    const bot = await this.botService.show(id, true, false)
     if (bot === undefined || _.isEmpty(bot)) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
