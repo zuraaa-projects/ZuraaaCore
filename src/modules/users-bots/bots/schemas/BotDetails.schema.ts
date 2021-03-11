@@ -37,7 +37,7 @@ export class BotDetails {
     this.isHTML = isHTML
     if (userData) {
       this.otherOwners = otherOwners.map((x: User) => {
-        return new User(x, false)
+        return new User(x, false, false)
       })
     } else {
       this.otherOwners = otherOwners

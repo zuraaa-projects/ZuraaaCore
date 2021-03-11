@@ -22,6 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (user === undefined || _.isEmpty(user)) {
       throw new HttpException('Token data is invalid.', HttpStatus.BAD_REQUEST)
     }
+
+    if (user.banned) {
+      throw new HttpException('You have been banned', HttpStatus.FORBIDDEN)
+    }
+
     const validated: RequestUserPayload = {
       userId: payload.sub,
       role: payload.role

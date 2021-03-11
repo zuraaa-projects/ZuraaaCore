@@ -3,9 +3,11 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import DiscordUser from 'src/extension-modules/discord/interfaces/DiscordUser'
+import { RoleLevel } from 'src/modules/auth/jwt.payload'
 import { AvatarService } from 'src/modules/avatars/avatar.service'
 import { updateDiscordData } from 'src/utils/discord-update-data'
 import UserDto from './dtos/edit-user/user.dto'
+import UpdateUserDto from './dtos/update-user/update-user.dto'
 import { User, UserDocument } from './schemas/User.schema'
 
 @Injectable()
@@ -21,7 +23,7 @@ export class UserService {
     return await userCreated.save()
   }
 
-  async show (id: string, showRole: boolean): Promise<User | undefined> {
+  async show (id: string): Promise<User | undefined> {
     const result = await this.UserModel.findOne({
       $or: [
         {
@@ -35,23 +37,23 @@ export class UserService {
     if (result === null) {
       return
     }
-    return new User(await updateDiscordData(result, this.discordService, this.avatarService), showRole)
+    return await updateDiscordData(result, this.discordService, this.avatarService)
   }
 
   async login (user: DiscordUser): Promise<User> {
     const findUser = await this.UserModel.findById(user.id).exec()
     if (findUser !== null) {
-      return new User(await updateDiscordData(findUser, user, this.avatarService), true)
+      return new User(await updateDiscordData(findUser, user, this.avatarService), true, true)
     }
 
     const userData = new this.UserModel({
       _id: user.id
     })
 
-    return new User(await updateDiscordData(userData, user, this.avatarService), true)
+    return await updateDiscordData(userData, user, this.avatarService) as User
   }
 
-  async update (user: UserDto, id: string): Promise<User | undefined> {
+  async updateMe (user: UserDto, id: string): Promise<User | undefined> {
     const userDb = await this.UserModel.findById(id).exec()
     if (userDb === null) {
       return
@@ -61,7 +63,31 @@ export class UserService {
       return
     }
     discordUserDb.details.description = user.bio
-    return new User(await discordUserDb.save(), false)
+    return await discordUserDb.save()
+  }
+
+  async update (user: User, userUpdate: UpdateUserDto, author: User): Promise<User> {
+    if (userUpdate.details.role !== undefined) {
+      user.details.role = userUpdate.details.role
+    }
+
+    if (userUpdate.banned !== undefined) {
+      user.banned = userUpdate.banned
+      if (user.banned) {
+        user.details.role = RoleLevel.user
+        try {
+          await this.discordService.bannedUser(user, author, userUpdate.banReason)
+        } catch (error) {
+
+        }
+      }
+    }
+
+    await this.UserModel.updateOne({
+      _id: user._id
+    }, user).exec()
+
+    return user
   }
 
   async updateNextVote (now: Date, userId: string): Promise<User> {
@@ -75,6 +101,6 @@ export class UserService {
   }
 
   async findById (id: string): Promise<User> {
-    return new User(await this.UserModel.findById(id).exec(), false)
+    return await this.UserModel.findById(id).exec() as User
   }
 }

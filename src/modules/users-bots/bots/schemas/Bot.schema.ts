@@ -32,7 +32,7 @@ export class Bot {
     this.discriminator = discriminator
     this.avatar = avatar
     this.status = status
-    this.owner = (userData) ? new User(owner, false) : owner
+    this.owner = (userData) ? new User(owner, false, false) : owner
     this.dates = new BotDate(dates)
     this.details = new BotDetails(details, userData)
     this.approvedBy = approvedBy

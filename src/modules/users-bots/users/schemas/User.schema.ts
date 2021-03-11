@@ -17,14 +17,16 @@ export class User {
     discriminator,
     avatar,
     dates,
-    details
-  }: any, showRole: boolean) {
+    details,
+    banned
+  }: any, showRole: boolean, showBan: boolean) {
     this._id = _id
     this.username = username
     this.discriminator = discriminator
     this.avatar = avatar
     this.dates = dates
     this.details = new UserDetails(details, showRole)
+    this.banned = (showBan) ? banned : undefined
   }
 
   @Prop()
@@ -49,6 +51,11 @@ export class User {
 
   @Prop(UserDetails)
   details: UserDetails
+
+  @Prop({
+    default: false
+  })
+  banned: boolean
 }
 
 export type UserDocument = User & Document

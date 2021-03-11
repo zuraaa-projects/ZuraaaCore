@@ -29,6 +29,10 @@ export default class AuthController {
       throw new HttpException(`Type ${data.type} not implemented`, HttpStatus.NOT_IMPLEMENTED)
     }
 
+    if (userLogged.banned) {
+      throw new HttpException('You have been banned', HttpStatus.FORBIDDEN)
+    }
+
     return this.authService.login(userLogged)
   }
 }

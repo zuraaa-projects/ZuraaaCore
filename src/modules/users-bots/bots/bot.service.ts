@@ -74,16 +74,6 @@ export class BotService {
       return
     }
 
-    // const bot =
-
-    // if (ownerData) {
-    //   bot.owner = new User(result.owner, false)
-
-    //   bot.details.otherOwners = result.details.otherOwners.map((x: User | string) => {
-    //     return new User(x, false)
-    //   })
-    // }
-
     return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, showWebhook, ownerData)
   }
 

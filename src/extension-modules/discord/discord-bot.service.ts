@@ -109,4 +109,13 @@ export class DiscordBotService {
         `${discord.url.siteBaseUrl}/bots/${(bot.details.customURL !== null) ? bot.details.customURL : bot._id}`
     })
   }
+
+  async bannedUser (user: User, author: User, reason: string): Promise<void> {
+    const message = (_.isEmpty(reason)) ? 'Motivo não informado' : reason
+
+    await this.api.post(`/channels/${discord.channels.logBan}/messages`, {
+      content: `\`${user.username}#${user.discriminator}\` (${user._id}) foi banido por \`${author.username}#${author.discriminator}\`\n` +
+        `Motivo: ${message}`
+    })
+  }
 }
