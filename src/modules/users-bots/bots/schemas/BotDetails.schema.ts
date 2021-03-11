@@ -23,7 +23,8 @@ export class BotDetails {
     otherOwners,
     customURL,
     donate,
-    github
+    github,
+    guilds
   }: any, userData: boolean) {
     this.prefix = prefix
     this.tags = tags
@@ -45,6 +46,7 @@ export class BotDetails {
     this.customURL = customURL
     this.donate = donate
     this.github = github
+    this.guilds = guilds
   }
 
   @Prop({
@@ -130,4 +132,10 @@ export class BotDetails {
     maxlength: 100
   })
   github: string
+
+  @Prop({
+    type: Number,
+    default: null
+  })
+  guilds: number
 }
