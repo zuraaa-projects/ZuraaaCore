@@ -78,7 +78,13 @@ export class UserService {
       if (user.banned) {
         user.details.role = RoleLevel.user
         try {
-          await this.discordService.bannedUser(user, author, userUpdate.banReason)
+          await this.discordService.banUser(user, author, userUpdate.banReason)
+        } catch (error) {
+
+        }
+      } else {
+        try {
+          await this.discordService.unbanUser(user, author)
         } catch (error) {
 
         }

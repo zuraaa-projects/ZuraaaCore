@@ -110,12 +110,28 @@ export class DiscordBotService {
     })
   }
 
-  async bannedUser (user: User, author: User, reason: string): Promise<void> {
-    const message = (_.isEmpty(reason)) ? 'Motivo não informado' : reason
+  async banUser (user: User, author: User, reason: string): Promise<void> {
+    const message = (_.isEmpty(reason)) ? 'Sem motivo informado.' : reason
 
-    await this.api.post(`/channels/${discord.channels.logBan}/messages`, {
-      content: `\`${user.username}#${user.discriminator}\` (${user._id}) foi banido por \`${author.username}#${author.discriminator}\`\n` +
-        `Motivo: ${message}`
-    })
+    const embed = {
+      embed: {
+        title: `${author.username}#${author.discriminator} baniu ${user.username}#${user.discriminator} (${user._id})`,
+        description: `Motivo: \`${message}\``,
+        color: 0xff0000,
+      }
+    }
+
+    await this.api.post(`/channels/${discord.channels.logBan}/messages`, embed)
+  }
+
+  async unbanUser (user: User, author: User): Promise<void> {
+    const embed = {
+      embed: {
+        title: `${author.username}#${author.discriminator} desbaniu ${user.username}#${user.discriminator} (${user._id})`,
+        color: 0xff0000,
+      }
+    }
+
+    await this.api.post(`/channels/${discord.channels.logBan}/messages`, embed)
   }
 }
