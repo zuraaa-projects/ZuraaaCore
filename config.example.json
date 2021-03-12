@@ -28,7 +28,8 @@
         },
         "roles": {
           "admRole": "cargo de adm pra ser notificado",
-          "developer": "cargo que os devs de bots vão ter"
+          "developer": "cargo que os devs de bots vão ter",
+          "checker": "cargo dos verificadores"
         }
     },
     "jwt": {

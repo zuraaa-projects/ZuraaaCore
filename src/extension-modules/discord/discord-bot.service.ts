@@ -227,4 +227,30 @@ export class DiscordBotService {
 
     }
   }
+
+  async addBot (bot: Bot, user: User): Promise<void> {
+    try {
+      await this.api.post(`/channels/${discord.channels.logBotValidation}/messages`, {
+        content: `\`${user.username}#${user.discriminator}\` enviou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) para a aprovação. <@&${discord.roles.checker}>`
+      })
+    } catch (error) {
+
+    }
+
+    try {
+      const { data: { id } } = await this.api.post('/users/@me/channels', {
+        recipient_id: bot.owner
+      })
+
+      await this.api.post(`/channels/${id as string}/messages`, {
+        embed: {
+          title: 'O seu bot foi enviado para aprovação',
+          color: 0xfbff00,
+          description: `O seu bot \`${bot.username}#${bot.discriminator}\` foi para a fila de aprovação`
+        }
+      })
+    } catch (error) {
+
+    }
+  }
 }

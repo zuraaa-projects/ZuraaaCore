@@ -148,6 +148,11 @@ export class BotService {
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
     }
+
+    const user = await this.userService.findById(botTrated.owner as string)
+
+    await this.discordService.addBot(botTrated, user)
+
     return new Bot(botElement, false, false, false)
   }
 
