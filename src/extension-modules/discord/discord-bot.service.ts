@@ -117,7 +117,7 @@ export class DiscordBotService {
       embed: {
         title: `${author.username}#${author.discriminator} baniu ${user.username}#${user.discriminator} (${user._id})`,
         description: `Motivo: \`${message}\``,
-        color: 0xff0000,
+        color: 0xff0000
       }
     }
 
@@ -128,7 +128,7 @@ export class DiscordBotService {
     const embed = {
       embed: {
         title: `${author.username}#${author.discriminator} desbaniu ${user.username}#${user.discriminator} (${user._id})`,
-        color: 0xff0000,
+        color: 0xff0000
       }
     }
 
