@@ -67,8 +67,10 @@ export class UserService {
   }
 
   async update (user: User, userUpdate: UpdateUserDto, author: User): Promise<User> {
-    if (userUpdate.details.role !== undefined) {
-      user.details.role = userUpdate.details.role
+    if (userUpdate.details !== undefined) {
+      if (userUpdate.details.role !== undefined) {
+        user.details.role = userUpdate.details.role
+      }
     }
 
     if (userUpdate.banned !== undefined) {

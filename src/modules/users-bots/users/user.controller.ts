@@ -83,8 +83,10 @@ export default class UserController {
       throw new HttpException('You do not have sufficient permission', HttpStatus.UNAUTHORIZED)
     }
 
-    if (updateUser.details.role !== user.details.role && updateUser.details.role >= role) {
-      throw new HttpException('You do not have sufficient permission', HttpStatus.UNAUTHORIZED)
+    if (updateUser.details !== undefined) {
+      if (updateUser.details.role !== user.details.role && updateUser.details.role >= role) {
+        throw new HttpException('You do not have sufficient permission', HttpStatus.UNAUTHORIZED)
+      }
     }
 
     await this.userService.update(user, updateUser, await this.userService.findById(userId))
