@@ -19,6 +19,8 @@ import { BotService } from './bot.service'
 import { Response } from 'express'
 import _ from 'lodash'
 import { NotBot } from './exceptions/not-bot'
+import ApproveReprove from './interfaces/approve-reprove'
+import Reason from './dtos/approve-reprove/reason'
 
 @Controller('bots')
 export default class BotController {
@@ -225,6 +227,52 @@ export default class BotController {
       }
     } else {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+    }
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async approveOrReprove (@Param('id') id: string, @Body() reason: Reason, @Req() req: Express.Request, @Query() query: ApproveReprove): Promise<{ message: string }> {
+    const { role, userId } = req.user as RequestUserPayload
+
+    const user = await this.userService.findById(userId)
+    const bot = await this.botService.show(id, false, false, false)
+
+    if (role < RoleLevel.checker) {
+      throw new HttpException('You do not have sufficient permission to update this bot.', HttpStatus.UNAUTHORIZED)
+    }
+
+    switch (query.type) {
+      case 'approve': {
+        try {
+          const botResult = await this.botService.approve(bot as Bot, user)
+
+          if (botResult === null || botResult === undefined) {
+            throw new HttpException('Bot not found', HttpStatus.NOT_FOUND)
+          }
+
+          return {
+            message: `The bot was approved by ${user.username}#${user.discriminator}`
+          }
+        } catch (error) {
+          throw new HttpException(error.message, HttpStatus.AMBIGUOUS)
+        }
+      }
+
+      case 'reprove': {
+        if (bot === undefined) {
+          throw new HttpException('Bot not found', HttpStatus.NOT_FOUND)
+        }
+
+        await this.botService.reprove(bot, user, reason.reason)
+        return {
+          message: `The bot was rejected by ${user.username}#${user.discriminator}`
+        }
+      }
+
+      default: {
+        throw new HttpException('Type not found', HttpStatus.BAD_REQUEST)
+      }
     }
   }
 

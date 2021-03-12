@@ -134,4 +134,97 @@ export class DiscordBotService {
 
     await this.api.post(`/channels/${discord.channels.logBan}/messages`, embed)
   }
+
+  async removeTeste (botId: string): Promise<boolean> {
+    try {
+      await this.api.delete(`/guilds/${discord.guilds.teste}/members/${botId}`)
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  async approveBot (bot: Bot, user: User): Promise<void> {
+    await this.removeTeste(bot._id)
+
+    try {
+      await this.api.post(`/channels/${discord.channels.logBotValidation}/messages`, {
+        content: `<@${bot.owner as string}> O bot \`${bot.username}#${bot.discriminator}\` foi aprovado por \`${user.username}#${user.discriminator}\`\n` +
+          `${discord.url.siteBaseUrl}/bots/${bot._id}`
+      })
+    } catch (error) {
+
+    }
+
+    try {
+      const { data: { id } } = await this.api.post('/users/@me/channels', {
+        recipient_id: bot.owner
+      })
+
+      await this.api.post(`/channels/${id as string}/messages`, {
+        embed: {
+          title: 'Sucesso',
+          color: 0x7ED321,
+          description: `O seu bot \`${bot.username}#${bot.discriminator}\` foi aprovado por \`${user.username}#${user.discriminator}\``
+        }
+      })
+    } catch (error) {
+
+    }
+
+    try {
+      await this.api.put(`/guilds/${discord.guilds.main}/members/${bot.owner as string}/roles/${discord.roles.developer}`)
+    } catch (error) {
+
+    }
+
+    if (bot.details.otherOwners !== undefined) {
+      for (let i = 0; i < bot.details.otherOwners.length; i++) {
+        const owner = bot.details.otherOwners[i]
+        try {
+          await this.api.put(`/guilds/${discord.guilds.main}/members/${owner as string}/roles/${discord.roles.developer}`)
+        } catch (error) {
+
+        }
+      }
+    }
+  }
+
+  async reproveBot (bot: Bot, user: User, reason: string): Promise<void> {
+    await this.removeTeste(bot._id)
+
+    try {
+      await this.api.post(`/channels/${discord.channels.logBotValidation}/messages`, {
+        content: `<@${bot.owner as string}> O bot \`${bot.username}#${bot.discriminator}\` foi reprovado por \`${user.username}#${user.discriminator}\`\n` +
+          `Motivo: ${(_.isEmpty(reason)) ? 'Motivo não informado' : reason}`
+      })
+    } catch (error) {
+
+    }
+
+    try {
+      const { data: { id } } = await this.api.post('/users/@me/channels', {
+        recipient_id: bot.owner
+      })
+
+      await this.api.post(`/channels/${id as string}/messages`, {
+        embed: {
+          title: 'Não foi dessa vez',
+          color: 0xff0000,
+          description: `O seu bot \`${bot.username}#${bot.discriminator}\` foi reprovado por \`${user.username}#${user.discriminator}\``,
+          fields: [
+            {
+              name: 'Motivo:',
+              value: (_.isEmpty(reason)) ? 'Motivo não informado' : reason
+            }
+          ],
+          footer: {
+            text: 'Você pode enviar o bot de novo quando tiver corrigido os os motivos dele ter sido rejeitado'
+          }
+        }
+      })
+    } catch (error) {
+
+    }
+  }
 }

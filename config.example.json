@@ -15,14 +15,20 @@
         "channels": {
           "logReport": "id do channel que sera enviado os reports",
           "logVote": "id do channel que sera enviado os votos",
-          "logBan": "id do channel que sera enviado os bans"
+          "logBan": "id do channel que sera enviado os bans",
+          "logBotValidation": "id do channel que sera enviado os aprovados e reijeitado"
+        },
+        "guilds": {
+          "teste": "id da guild que os bots são testados",
+          "main": "id da guild principal"
         },
         "url": {
           "apiBaseUrl": "url base da api para o bot usar",
           "siteBaseUrl": "url base do site para o bot usar"
         },
         "roles": {
-          "admRole": "cargo de adm pra ser notificado"
+          "admRole": "cargo de adm pra ser notificado",
+          "developer": "cargo que os devs de bots vão ter"
         }
     },
     "jwt": {

@@ -125,10 +125,12 @@ export class BotService {
       throw new NotBot('The id is not a bot.')
     }
 
-    for (let i = 0; i < bot.details.otherOwners.length; i++) {
-      discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
-      if (discordUser.bot) {
-        throw new NotBot('The otherOwners id is not a user.')
+    if (bot.details.otherOwners !== undefined) {
+      for (let i = 0; i < bot.details.otherOwners.length; i++) {
+        discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
+        if (discordUser.bot) {
+          throw new NotBot('The otherOwners id is not a user.')
+        }
       }
     }
 
@@ -237,5 +239,30 @@ export class BotService {
     }).exec()
 
     return bots.map(x => new Bot(x, false, false, false))
+  }
+
+  async approve (bot: Bot, user: User): Promise<Bot | null | undefined> {
+    const botResult = await this.BotModel.findById(bot._id).exec()
+
+    if (botResult == null) {
+      return null
+    }
+
+    if (botResult.approvedBy !== null) {
+      throw new Error('Bot has already been approved')
+    }
+
+    botResult.approvedBy = user._id
+
+    await this.discordService.approveBot(botResult, user)
+
+    await botResult.save()
+
+    return await updateDiscordData(botResult, this.discordService, this.avatarService)
+  }
+
+  async reprove (bot: Bot, user: User, reason: string): Promise<void> {
+    await this.delete(bot._id)
+    await this.discordService.reproveBot(bot, user, reason)
   }
 }
