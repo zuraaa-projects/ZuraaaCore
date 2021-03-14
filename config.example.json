@@ -13,14 +13,14 @@
             "token": "token do bot discord"
         },
         "channels": {
-          "logReport": "id do channel que sera enviado os reports",
-          "logVote": "id do channel que sera enviado os votos",
-          "logBan": "id do channel que sera enviado os bans",
-          "logBotValidation": "id do channel que sera enviado os aprovados e reijeitado"
+          "logReport": "id do canal que será enviado os reports",
+          "logVote": "id do canal que será enviado os votos",
+          "logBan": "id do canal que será enviado os bans",
+          "logBotValidation": "id do canal que será enviado os aprovados e rejeitados"
         },
         "guilds": {
-          "teste": "id da guild que os bots são testados",
-          "main": "id da guild principal"
+          "teste": "id do servidor que os bots são testados",
+          "main": "id do servidor principal"
         },
         "url": {
           "apiBaseUrl": "url base da api para o bot usar",
