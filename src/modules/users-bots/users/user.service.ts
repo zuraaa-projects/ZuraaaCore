@@ -62,7 +62,7 @@ export class UserService {
     if (discordUserDb === undefined) {
       return
     }
-    discordUserDb.details.description = user.bio
+    discordUserDb.details.description = user.bio ?? null
     return await discordUserDb.save()
   }
 
