@@ -12,7 +12,7 @@ export default class AvatarController {
   ) {}
 
   @Get(':id')
-  @Header('Cache-Control', 'public, max-age=108000, only-if-cached')
+  @Header('Cache-Control', 'public, max-age=60, only-if-cached')
   async avatar (@Param('id') id: string, @Res() res: Response): Promise<void> {
     const image = await this.avatarsService.getAvatar(id)
     if (image !== undefined) {
