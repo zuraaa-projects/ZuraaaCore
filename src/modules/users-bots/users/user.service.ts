@@ -23,6 +23,20 @@ export class UserService {
     return await userCreated.save()
   }
 
+  async register (id: string): Promise<User> {
+    let user = await this.UserModel.findOne({
+      _id: id
+    }).exec()
+
+    if (user === null) {
+      user = new this.UserModel({
+        _id: id
+      })
+    }
+
+    return await updateDiscordData(user, this.discordService, this.avatarService) as User
+  }
+
   async show (id: string): Promise<User | undefined> {
     const result = await this.UserModel.findOne({
       $or: [

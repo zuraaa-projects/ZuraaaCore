@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { DiscordModule } from 'src/extension-modules/discord/discord.module'
+import { MessageModule } from 'src/extension-modules/messages/messages.module'
 import { ReportModule } from 'src/extension-modules/report/report.module'
 import { AvatarModule } from '../avatars/avatar.module'
 import BotController from './bots/bot.controller'
@@ -24,7 +25,8 @@ import { UserService } from './users/user.service'
       }
     ]),
     AvatarModule,
-    ReportModule
+    ReportModule,
+    MessageModule
   ],
   providers: [
     BotService,

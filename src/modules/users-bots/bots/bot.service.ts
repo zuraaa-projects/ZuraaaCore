@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import _ from 'lodash'
-import { FilterQuery, Model } from 'mongoose'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
-import { RequestUserPayload } from 'src/modules/auth/jwt.payload'
+import { MessageService } from 'src/extension-modules/messages/messages.service'
 import { AvatarService } from 'src/modules/avatars/avatar.service'
+import { RequestUserPayload } from 'src/modules/auth/jwt.payload'
 import { updateDiscordData } from 'src/utils/discord-update-data'
-import xss from 'xss'
-import md from 'markdown-it'
-import { User } from '../users/schemas/User.schema'
-import { UserService } from '../users/user.service'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { Bot, BotDocument } from './schemas/Bot.schema'
+import { User } from '../users/schemas/User.schema'
+import { UserService } from '../users/user.service'
 import TimeError from './exceptions/TimeError'
+import { InjectModel } from '@nestjs/mongoose'
+import { FilterQuery, Model } from 'mongoose'
 import { NotBot } from './exceptions/not-bot'
+import { Injectable } from '@nestjs/common'
+import md from 'markdown-it'
+import _ from 'lodash'
+import xss from 'xss'
 
 @Injectable()
 export class BotService {
@@ -21,7 +22,8 @@ export class BotService {
     @InjectModel(Bot.name) private readonly BotModel: Model<BotDocument>,
     private readonly discordService: DiscordBotService,
     private readonly avatarService: AvatarService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly messageService: MessageService
   ) {}
 
   async findById (id: string): Promise<BotDocument | null> {
@@ -119,7 +121,7 @@ export class BotService {
   }
 
   async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot | null> {
-    let discordUser = await this.discordService.getUser(bot._id)
+    let discordUser = await this.messageService.getUser(bot._id)
 
     if (!discordUser.bot) {
       throw new NotBot('The id is not a bot.')
@@ -127,10 +129,12 @@ export class BotService {
 
     if (bot.details.otherOwners !== undefined) {
       for (let i = 0; i < bot.details.otherOwners.length; i++) {
-        discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
+        discordUser = await this.messageService.getUser(bot.details.otherOwners[i])
         if (discordUser.bot) {
           throw new NotBot('The otherOwners id is not a user.')
         }
+
+        await this.userService.register(discordUser.id)
       }
     }
 

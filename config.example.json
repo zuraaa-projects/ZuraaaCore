@@ -2,6 +2,9 @@
     "mongo": {
         "uri": "url do seu mongodb"
     },
+    "rabbit": {
+      "url": "amqp://localhost"
+    },
     "discord": {
         "app": {
             "id": "id da sua aplicação discord",
