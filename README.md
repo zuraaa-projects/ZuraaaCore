@@ -8,6 +8,8 @@ Principal api e controle de todo o site [Zuraaa](https://github.com/zuraaa-proje
 
 ## Como usar
 
+**⚠ Esse projeto precisa de uma instância do [MongoDB](https://www.mongodb.com/), de uma instância [RabbitMQ](https://www.rabbitmq.com/) e de uma instância do [ZuraaaBot](https://github.com/zuraaa-projects/ZuraaaBot) para poder funcionar ⚠**
+
 - Primeiro clone o repositório:
 
 ```sh
