@@ -250,19 +250,21 @@ export class BotService {
     return sanitizeHtml(html, {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([
         'iframe',
-        'style'
+        'style',
+        'img'
       ]),
       allowedAttributes: {
         iframe: [
           'sandbox',
           'width',
           'heigth',
-          'src',
           'title',
           'border'
         ],
         '*': [
           'style',
+          'src',
+          'href',
           'class'
         ]
       },
