@@ -44,6 +44,7 @@
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
         "rxjs": "^6.6.6",
+        "sanitize-html": "^2.3.2",
         "uuid": "^8.3.2",
         "xss": "^1.0.8"
     },
@@ -64,6 +65,7 @@
         "@types/passport": "^1.0.6",
         "@types/passport-jwt": "^3.0.5",
         "@types/passport-strategy": "^0.2.35",
+        "@types/sanitize-html": "^1.27.1",
         "@types/supertest": "^2.0.8",
         "@types/uuid": "^8.3.0",
         "@typescript-eslint/eslint-plugin": "^4.16.1",

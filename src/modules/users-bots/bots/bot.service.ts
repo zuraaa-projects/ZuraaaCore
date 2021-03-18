@@ -12,9 +12,9 @@ import { InjectModel } from '@nestjs/mongoose'
 import { FilterQuery, Model } from 'mongoose'
 import { NotBot } from './exceptions/not-bot'
 import { Injectable } from '@nestjs/common'
+import sanitizeHtml from 'sanitize-html'
 import md from 'markdown-it'
 import _ from 'lodash'
-import xss from 'xss'
 
 @Injectable()
 export class BotService {
@@ -146,7 +146,9 @@ export class BotService {
     botElement.owner = userPayload.userId
     const { isHTML, longDescription } = bot.details
     if (!_.isEmpty(longDescription)) {
-      botElement.details.htmlDescription = (isHTML) ? xss(longDescription) : md().render(longDescription)
+      botElement.details.htmlDescription = (isHTML)
+        ? this.sanitize(longDescription)
+        : md().render(longDescription)
     }
     const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService, true)
     if (botTrated === undefined) {
@@ -226,7 +228,9 @@ export class BotService {
     botDb.details.shortDescription = bot.details.shortDescription
     botDb.details.longDescription = bot.details.longDescription
     if (!_.isEmpty(bot.details.longDescription)) {
-      botDb.details.htmlDescription = (bot.details.isHTML) ? xss(bot.details.longDescription) : md().render(bot.details.longDescription)
+      botDb.details.htmlDescription = (bot.details.isHTML)
+        ? this.sanitize(bot.details.longDescription)
+        : md().render(bot.details.longDescription)
     } else {
       botDb.details.htmlDescription = ''
     }
@@ -240,6 +244,35 @@ export class BotService {
     botDb.details.otherOwners = bot.details.otherOwners
 
     return new Bot(await botDb.save(), false, false, false)
+  }
+
+  private sanitize (html: string): string {
+    return sanitizeHtml(html, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+        'iframe',
+        'style'
+      ]),
+      allowedAttributes: {
+        iframe: [
+          'sandbox',
+          'width',
+          'heigth',
+          'src',
+          'title',
+          'border'
+        ],
+        '*': [
+          'style',
+          'class'
+        ]
+      },
+      transformTags: {
+        iframe: sanitizeHtml.simpleTransform('iframe', {
+          sandbox: ''
+        })
+      },
+      allowVulnerableTags: true
+    })
   }
 
   async botsToApprove (): Promise<Bot[]> {

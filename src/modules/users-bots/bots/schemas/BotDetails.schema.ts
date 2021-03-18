@@ -81,12 +81,12 @@ export class BotDetails {
   shortDescription: string
 
   @Prop({
-    maxlength: 10000
+    maxlength: 100000
   })
   longDescription: string
 
   @Prop({
-    maxlength: 100000
+    maxlength: 200000
   })
   htmlDescription: string
 

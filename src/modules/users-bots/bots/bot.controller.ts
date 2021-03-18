@@ -1,4 +1,3 @@
-import { Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, Res, Delete, Header, Patch, Put, UseInterceptors } from '@nestjs/common'
 import { Body, Query, Req, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
@@ -21,6 +20,21 @@ import { Bot } from './schemas/Bot.schema'
 import { BotService } from './bot.service'
 import { Response } from 'express'
 import _ from 'lodash'
+import {
+  UseInterceptors,
+  HttpException,
+  Controller,
+  HttpStatus,
+  UseGuards,
+  Delete,
+  Header,
+  Param,
+  Patch,
+  Post,
+  Get,
+  Res,
+  Put
+} from '@nestjs/common'
 
 @Controller('bots')
 export default class BotController {
@@ -158,7 +172,12 @@ export default class BotController {
     }
   }))
   @UseGuards(JwtAuthGuard)
-  async report (@Param('id') id: string, @Body() report: BotReport, @Req() req: Express.Request, @UploadedFiles() files: UploadFiles): Promise<{ bot: Bot, reports: string[] }> {
+  async report (
+    @Param('id') id: string,
+      @Body() report: BotReport,
+      @Req() req: Express.Request,
+      @UploadedFiles() files: UploadFiles
+  ): Promise<{ bot: Bot, reports: string[] }> {
     const { userId } = req.user as RequestUserPayload
     const bot = await this.botService.findById(id)
 
@@ -232,7 +251,12 @@ export default class BotController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  async approveOrReprove (@Param('id') id: string, @Body() reason: Reason, @Req() req: Express.Request, @Query() query: ApproveReprove): Promise<{ message: string }> {
+  async approveOrReprove (
+    @Param('id') id: string,
+      @Body() reason: Reason,
+      @Req() req: Express.Request,
+      @Query() query: ApproveReprove
+  ): Promise<{ message: string }> {
     const { role, userId } = req.user as RequestUserPayload
 
     const user = await this.userService.findById(userId)
