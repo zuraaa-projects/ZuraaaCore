@@ -8,6 +8,7 @@ import { Bot, BotDocument } from './schemas/Bot.schema'
 import UpdateBotDto from './dtos/update/update-bot.dto'
 import { User } from '../users/schemas/User.schema'
 import { UserService } from '../users/user.service'
+import { discord } from '../../../../config.json'
 import TimeError from './exceptions/TimeError'
 import { InjectModel } from '@nestjs/mongoose'
 import { FilterQuery, Model } from 'mongoose'
@@ -17,7 +18,6 @@ import sanitizeHtml from 'sanitize-html'
 import md from 'markdown-it'
 import axios from 'axios'
 import _ from 'lodash'
-import { discord } from '../../../../config.json'
 
 @Injectable()
 export class BotService {
@@ -207,7 +207,7 @@ export class BotService {
       _id: id
     }).exec()
 
-    if (deleted.n === undefined || isNaN(deleted.n)) {
+    if (deleted.n === undefined) {
       return false
     }
     return true
