@@ -5,6 +5,7 @@ import { RequestUserPayload } from 'src/modules/auth/jwt.payload'
 import { updateDiscordData } from 'src/utils/discord-update-data'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import { Bot, BotDocument } from './schemas/Bot.schema'
+import UpdateBotDto from './dtos/update/update-bot.dto'
 import { User } from '../users/schemas/User.schema'
 import { UserService } from '../users/user.service'
 import TimeError from './exceptions/TimeError'
@@ -14,7 +15,9 @@ import { NotBot } from './exceptions/not-bot'
 import { Injectable } from '@nestjs/common'
 import sanitizeHtml from 'sanitize-html'
 import md from 'markdown-it'
+import axios from 'axios'
 import _ from 'lodash'
+import { discord } from '../../../../config.json'
 
 @Injectable()
 export class BotService {
@@ -74,6 +77,15 @@ export class BotService {
 
     if (result === null) {
       return
+    }
+
+    if (discord.getServers.active) {
+      try {
+        const { data: { guilds } } = await axios.get(`${discord.getServers.url}/api/bots/${id}`)
+        result.details.guilds = guilds
+      } catch (error) {
+        console.error('Fail get guilds')
+      }
     }
 
     return new Bot(await updateDiscordData(result, this.discordService, this.avatarService), voteLog, showWebhook, ownerData)
@@ -150,6 +162,7 @@ export class BotService {
         ? this.sanitize(longDescription)
         : md().render(longDescription)
     }
+
     const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService, true)
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
@@ -207,7 +220,7 @@ export class BotService {
     }).exec()
   }
 
-  async update (bot: CreateBotDto, botUpdate: Bot): Promise<Bot | undefined> {
+  async update (bot: UpdateBotDto, botUpdate: Bot): Promise<Bot | undefined> {
     const botDb = await this.BotModel.findById(botUpdate._id).exec()
     if (botDb == null) {
       return

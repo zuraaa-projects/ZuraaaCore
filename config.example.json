@@ -33,6 +33,10 @@
           "admRole": "cargo de adm pra ser notificado",
           "developer": "cargo que os devs de bots vão ter",
           "checker": "cargo dos verificadores"
+        },
+        "getServers": {
+          "active": false,
+          "url": ""
         }
     },
     "jwt": {

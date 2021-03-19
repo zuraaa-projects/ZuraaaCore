@@ -35,6 +35,7 @@ import {
   Res,
   Put
 } from '@nestjs/common'
+import UpdateBotDto from './dtos/update/update-bot.dto'
 
 @Controller('bots')
 export default class BotController {
@@ -130,7 +131,7 @@ export default class BotController {
       if (error instanceof NotBot) {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
       } else {
-        throw new HttpException('Discord returned invalid data.', HttpStatus.BAD_REQUEST)
+        throw new HttpException('Discord returned invalid data.', HttpStatus.NOT_ACCEPTABLE)
       }
     }
     if (botResult === null) {
@@ -218,11 +219,11 @@ export default class BotController {
     }
   }
 
-  @Put()
+  @Put(':id')
   @UseGuards(JwtAuthGuard)
-  async update (@Body() bot: CreateBotDto, @Req() req: Express.Request): Promise<Bot> {
+  async update (@Param('id') id: string, @Body() bot: UpdateBotDto, @Req() req: Express.Request): Promise<Bot> {
     const { role, userId } = req.user as RequestUserPayload
-    let botUpdate = await this.botService.show(bot._id, false)
+    let botUpdate = await this.botService.show(id, false)
 
     if (botUpdate !== undefined) {
       if (role >= RoleLevel.adm || botUpdate.owner === userId) {

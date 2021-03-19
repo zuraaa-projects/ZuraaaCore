@@ -1,7 +1,7 @@
 import { MaxLength, IsEnum, IsOptional, ValidateIf, isURL } from 'class-validator'
 import { WebhookTypes } from '../../enums/webhook.enums'
 
-export default class WebhookBotDto {
+export default class UpdateWebhookBotDto {
   @IsOptional()
   @MaxLength(2083)
   authorization!: string
