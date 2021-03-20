@@ -18,10 +18,16 @@ export default class BotWebhook {
     this.lastError = lastError
   }
 
-  @Prop()
+  @Prop({
+    default: null,
+    type: String
+  })
   authorization: string
 
-  @Prop()
+  @Prop({
+    default: null,
+    type: String
+  })
   url: string
 
   @Prop({

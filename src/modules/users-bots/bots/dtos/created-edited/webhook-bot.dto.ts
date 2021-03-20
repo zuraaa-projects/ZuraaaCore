@@ -4,7 +4,7 @@ import { WebhookTypes } from '../../enums/webhook.enums'
 export default class WebhookBotDto {
   @IsOptional()
   @MaxLength(2083)
-  authorization!: string
+  authorization?: string
 
   @ValidateIf(x => x.type !== WebhookTypes.Disabled)
   @IsUrl()
