@@ -1,15 +1,15 @@
-import { MaxLength, IsEnum, IsOptional, ValidateIf, isURL } from 'class-validator'
+import { MaxLength, IsEnum, IsOptional, ValidateIf, IsUrl } from 'class-validator'
 import { WebhookTypes } from '../../enums/webhook.enums'
 
 export default class UpdateWebhookBotDto {
   @IsOptional()
   @MaxLength(2083)
-  authorization!: string
+  authorization?: string
 
-  @ValidateIf(x => x.type !== 0 && isURL(x.url))
+  @ValidateIf(x => x.type !== WebhookTypes.Disabled)
+  @IsUrl()
   url!: string
 
-  @IsOptional()
   @IsEnum(WebhookTypes)
   type!: WebhookTypes
 }
