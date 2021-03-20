@@ -79,7 +79,7 @@ export class BotService {
       return
     }
 
-    if (discord.getServers.active) {
+    if (discord.getServers.enabled) {
       try {
         const { data: { guilds } } = await axios.get(`${discord.getServers.url}/api/bots/${id}`)
         result.details.guilds = guilds

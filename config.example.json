@@ -5,6 +5,10 @@
     "rabbit": {
       "url": "amqp://localhost"
     },
+    "captcha": {
+      "enabled": false,
+      "secret": "secret do recaptcha v2 invisivel"
+    },
     "discord": {
         "app": {
             "id": "id da sua aplicação discord",
@@ -35,7 +39,7 @@
           "checker": "cargo dos verificadores"
         },
         "getServers": {
-          "active": false,
+          "enabled": false,
           "url": ""
         }
     },
