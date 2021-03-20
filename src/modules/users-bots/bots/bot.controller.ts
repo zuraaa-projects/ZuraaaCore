@@ -290,7 +290,7 @@ export default class BotController {
         }
       }
 
-      case 'reprove': {
+      case 'reject': {
         if (bot === undefined) {
           throw new HttpException('Bot not found', HttpStatus.NOT_FOUND)
         }
