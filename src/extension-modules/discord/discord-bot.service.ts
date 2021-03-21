@@ -114,6 +114,7 @@ export class DiscordBotService {
     const message = (_.isEmpty(reason)) ? 'Sem motivo informado.' : reason
 
     const embed = {
+      content: `<@${discord.roles.admRole}>`,
       embed: {
         title: `${author.username}#${author.discriminator} baniu ${user.username}#${user.discriminator} (${user._id})`,
         description: `Motivo: \`${message}\``,
@@ -126,6 +127,7 @@ export class DiscordBotService {
 
   async unbanUser (user: User, author: User): Promise<void> {
     const embed = {
+      content: `<@${discord.roles.admRole}>`,
       embed: {
         title: `${author.username}#${author.discriminator} desbaniu ${user.username}#${user.discriminator} (${user._id})`,
         color: 0xff0000
