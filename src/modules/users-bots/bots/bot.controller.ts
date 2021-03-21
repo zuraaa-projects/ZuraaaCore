@@ -236,7 +236,7 @@ export default class BotController {
     const { role, userId } = req.user as RequestUserPayload
     let botUpdate = await this.botService.show(id, false)
 
-    if (botUpdate !== undefined) {
+    if (botUpdate != null) {
       if (role >= RoleLevel.adm || botUpdate.owner === userId) {
         try {
           botUpdate = await this.botService.update(bot, botUpdate)
@@ -248,7 +248,8 @@ export default class BotController {
           }
         }
 
-        if (botUpdate !== undefined) {
+        if (botUpdate != null) {
+          await this.discordBotService.updateBot(botUpdate, await this.userService.show(botUpdate.owner as string) as User)
           return botUpdate
         } else {
           throw new HttpException('Fail to update bot.', HttpStatus.INTERNAL_SERVER_ERROR)

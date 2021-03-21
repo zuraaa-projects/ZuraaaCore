@@ -236,7 +236,7 @@ export class DiscordBotService {
         content: `\`${user.username}#${user.discriminator}\` enviou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) para a aprovação. <@&${discord.roles.checker}>`
       })
     } catch (error) {
-
+      console.log('Falha ao enviar a mensagem de bot enviado')
     }
 
     try {
@@ -252,7 +252,17 @@ export class DiscordBotService {
         }
       })
     } catch (error) {
+      console.log('Falha ao enviar a mensagem de bot enviado para o dono')
+    }
+  }
 
+  async updateBot (bot: Bot, user: User): Promise<void> {
+    try {
+      await this.api.post(`/channels/${discord.channels.logBotValidation}/messages`, {
+        content: `\`${user.username}#${user.discriminator}\` editou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) <@&${discord.roles.admRole}>`
+      })
+    } catch (error) {
+      console.log('Falha ao enviar a mensagem de bot editado')
     }
   }
 }
