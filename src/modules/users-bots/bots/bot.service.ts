@@ -264,16 +264,13 @@ export class BotService {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([
         'iframe',
         'style',
-        'img',
-        'embed'
+        'img'
       ]),
       allowedAttributes: {
         iframe: [
           'sandbox',
           'title',
           'border'
-        ],
-        embed: [
         ],
         '*': [
           'style',
