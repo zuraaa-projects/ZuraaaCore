@@ -68,7 +68,7 @@ export class Bot {
   avatar: string
 
   @Prop({
-    default: 'offline'
+    default: 'online'
   })
   status: BotStatus
 
