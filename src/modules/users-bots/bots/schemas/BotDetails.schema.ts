@@ -6,8 +6,7 @@ import { Prop, Schema } from '@nestjs/mongoose'
 import { User } from '../../users/schemas/User.schema'
 import { AppLibrary, BotsTags } from '../enums/details.enums'
 
-@Schema({
-})
+@Schema()
 export class BotDetails {
   constructor ({
     prefix,
