@@ -81,10 +81,10 @@ export class BotService {
 
     if (discord.getServers.enabled) {
       try {
-        const { data: { guilds } } = await axios.get(`${discord.getServers.url}/api/bots/${id}`)
+        const { data: { guilds } } = await axios.get(`${discord.getServers.url}/api/bots/${result._id as string}`)
         result.details.guilds = guilds
       } catch (error) {
-        console.error(`Fail get guilds from ${id}`)
+        console.error(`Fail get guilds from ${result._id as string}`)
       }
     }
 
