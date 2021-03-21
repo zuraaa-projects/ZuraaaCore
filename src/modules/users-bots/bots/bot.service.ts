@@ -207,7 +207,9 @@ export class BotService {
       _id: id
     }).exec()
 
-    if (deleted.n === undefined) {
+    await this.avatarService.deleteAvatar(id)
+
+    if (deleted.n == null) {
       return false
     }
     return true
