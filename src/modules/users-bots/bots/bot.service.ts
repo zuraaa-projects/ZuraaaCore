@@ -226,10 +226,12 @@ export class BotService {
       return
     }
 
-    for (let i = 0; i < bot.details.otherOwners.length; i++) {
-      const discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
-      if (discordUser.bot) {
-        throw new NotBot(true, discordUser.id)
+    if (bot.details.otherOwners != null) {
+      for (let i = 0; i < bot.details.otherOwners.length; i++) {
+        const discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
+        if (discordUser.bot) {
+          throw new NotBot(true, discordUser.id)
+        }
       }
     }
 
