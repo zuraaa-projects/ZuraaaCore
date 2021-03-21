@@ -259,7 +259,7 @@ export class DiscordBotService {
   async updateBot (bot: Bot, user: User): Promise<void> {
     try {
       await this.api.post(`/channels/${discord.channels.logBotValidation}/messages`, {
-        content: `\`${user.username}#${user.discriminator}\` editou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) <@&${discord.roles.admRole}>`
+        content: `\`${user.username}#${user.discriminator}\` editou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) <@&${discord.roles.siteMod}>`
       })
     } catch (error) {
       console.log('Falha ao enviar a mensagem de bot editado')
