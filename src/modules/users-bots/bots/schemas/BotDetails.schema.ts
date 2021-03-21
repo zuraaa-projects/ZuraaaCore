@@ -65,7 +65,7 @@ export class BotDetails {
   library: AppLibrary
 
   @Prop({
-    maxlength: 255,
+    maxlength: 2083,
     default: null,
     type: String
   })

@@ -16,7 +16,7 @@ export default class DetailsBotDto {
   @IsEnum(AppLibrary)
   library!: AppLibrary
 
-  @MaxLength(255)
+  @MaxLength(2083)
   @IsOptional()
   customInviteLink!: string
 
