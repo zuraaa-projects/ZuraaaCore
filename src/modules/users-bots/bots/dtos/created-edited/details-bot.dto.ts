@@ -1,4 +1,4 @@
-import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize, IsOptional, IsUrl } from 'class-validator'
+import { MaxLength, IsNotEmpty, Length, IsEnum, ArrayMaxSize, ArrayMinSize, IsOptional, IsUrl, IsBoolean } from 'class-validator'
 import { AppLibrary, BotsTags } from '../../enums/details.enums'
 
 export default class DetailsBotDto {
@@ -27,6 +27,7 @@ export default class DetailsBotDto {
   @MaxLength(100000)
   longDescription!: string
 
+  @IsBoolean()
   isHTML!: boolean
 
   @IsOptional()
