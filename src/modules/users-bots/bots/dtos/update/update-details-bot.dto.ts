@@ -30,7 +30,7 @@ export default class UpdateDetailsBotDto {
   isHTML!: boolean
 
   @IsOptional()
-  @MaxLength(10)
+  @MaxLength(20)
   supportServer!: string
 
   @IsOptional()

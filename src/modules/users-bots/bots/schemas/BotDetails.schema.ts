@@ -95,7 +95,7 @@ export class BotDetails {
   isHTML!: boolean
 
   @Prop({
-    maxlength: 10,
+    maxlength: 20,
     default: null,
     type: String
   })
