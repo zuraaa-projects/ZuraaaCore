@@ -232,6 +232,8 @@ export class BotService {
         if (discordUser.bot) {
           throw new NotBot(true, discordUser.id)
         }
+
+        await this.userService.register(discordUser.id)
       }
     }
 
