@@ -281,7 +281,7 @@ export class BotService {
           'class',
           'id',
           'width',
-          'heigth'
+          'height'
         ]
       },
       transformTags: {
