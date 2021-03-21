@@ -137,6 +137,7 @@ export default class BotController {
           idError: true
         }, HttpStatus.BAD_REQUEST)
       } else {
+        console.log(error)
         throw new HttpException('Discord returned invalid data.', HttpStatus.INTERNAL_SERVER_ERROR)
       }
     }
