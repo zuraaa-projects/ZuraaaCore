@@ -3,11 +3,13 @@ import { Channel, connect, Connection } from 'amqplib'
 import { v4 as uuid } from 'uuid'
 import DiscordUser from './interfaces/discord-user'
 import { rabbit } from '../../../config.json'
+import NodeCache from 'node-cache'
 
 @Injectable()
 export class MessageService implements OnModuleInit {
   connection?: Connection
   channel?: Channel
+  cache = new NodeCache()
 
   async onModuleInit (): Promise<void> {
     this.connection = await connect(rabbit.url)
@@ -43,8 +45,19 @@ export class MessageService implements OnModuleInit {
   }
 
   async getUser (id: string): Promise<DiscordUser> {
-    const user = await this.send(id, 'getUser')
+    let user = this.cache.get<DiscordUser>(id)
+    if (user === undefined) {
+      try {
+        user = JSON.parse(await this.send(id, 'getUser'))
+        if (user == null) {
+          console.error('Fail get user')
+        }
+        this.cache.set(id, user, 3600)
+      } catch (error) {
+        console.error('Fail get user')
+      }
+    }
 
-    return JSON.parse(user)
+    return user as DiscordUser
   }
 }
