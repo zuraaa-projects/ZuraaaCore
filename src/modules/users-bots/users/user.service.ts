@@ -93,14 +93,15 @@ export class UserService {
         user.details.role = RoleLevel.user
         try {
           await this.discordService.banUser(user, author, userUpdate.banReason)
+          await this.avatarService.deleteAvatar(user._id)
         } catch (error) {
-
+          console.error('Falha ao banir usuario')
         }
       } else {
         try {
           await this.discordService.unbanUser(user, author)
         } catch (error) {
-
+          console.error('Falha ao desbanir usuario')
         }
       }
     }

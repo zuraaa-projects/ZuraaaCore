@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { join } from 'path'
 import { stat } from 'fs'
-import { mkdir, readdir, readFile, rm, writeFile } from 'fs/promises'
+import { mkdir, readdir, readFile, rm, writeFile, rmdir } from 'fs/promises'
 import Image from './interfaces/Image'
 
 @Injectable()
@@ -47,5 +47,14 @@ export class AvatarService implements OnModuleInit {
       await mkdir(folder)
     }
     await writeFile(join(folder, `${extension}`), avatar)
+  }
+
+  async deleteAvatar (id: string): Promise<void> {
+    const folder = join(this.cachePath, id)
+    try {
+      await rmdir(folder)
+    } catch (error) {
+      console.error(`Falha ao remover cache (${id})`)
+    }
   }
 }
