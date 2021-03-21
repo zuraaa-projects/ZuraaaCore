@@ -5,7 +5,7 @@ export function getImageUrl ({
   discriminator,
   id
 }: DiscordUser): string {
-  if (avatar === undefined) {
+  if (avatar == null) {
     const number = parseInt(discriminator) % 5
     return `https://cdn.discordapp.com/embed/avatars/${number}.png`
   }
