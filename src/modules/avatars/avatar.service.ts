@@ -10,7 +10,7 @@ export class AvatarService implements OnModuleInit {
 
   onModuleInit (): void {
     stat(this.cachePath, (err) => {
-      if (err !== null) {
+      if (err != null) {
         mkdir(this.cachePath, { recursive: true }).catch(console.error)
       }
     })
@@ -29,7 +29,7 @@ export class AvatarService implements OnModuleInit {
 
   async getAvatar (id: string): Promise<Image | undefined> {
     const file = await this.getAvatarFile(id)
-    if (file !== undefined) {
+    if (file != null) {
       const data = await readFile(join(this.cachePath, id, file))
       return {
         type: file,
@@ -41,7 +41,7 @@ export class AvatarService implements OnModuleInit {
   async writeAvatar (id: string, extension: string, avatar: Buffer): Promise<void> {
     const old = await this.getAvatarFile(id)
     const folder = join(this.cachePath, id)
-    if (old !== undefined) {
+    if (old != null) {
       await rm(join(folder, old))
     } else {
       await mkdir(folder)
