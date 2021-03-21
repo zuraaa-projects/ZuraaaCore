@@ -1,6 +1,8 @@
 export class NotBot extends Error {
-  constructor (message: string) {
+  constructor (
+    public bot: boolean,
+    public id: string
+  ) {
     super()
-    this.message = message
   }
 }

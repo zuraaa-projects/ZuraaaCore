@@ -12,7 +12,7 @@ export enum BotsTags{
   lol = 'lol',
   minecraft = 'minecraft',
   hytale = 'hytale',
-  nfsw = 'nfsw',
+  nsfw = 'nsfw',
   outros = 'outros'
 }
 

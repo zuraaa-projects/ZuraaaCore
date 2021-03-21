@@ -131,9 +131,13 @@ export default class BotController {
       botResult = await this.botService.add(bot, req.user as RequestUserPayload)
     } catch (error) {
       if (error instanceof NotBot) {
-        throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+        throw new HttpException({
+          bot: error.bot,
+          id: error.id,
+          idError: true
+        }, HttpStatus.BAD_REQUEST)
       } else {
-        throw new HttpException('Discord returned invalid data.', HttpStatus.NOT_ACCEPTABLE)
+        throw new HttpException('Discord returned invalid data.', HttpStatus.INTERNAL_SERVER_ERROR)
       }
     }
     if (botResult === null) {

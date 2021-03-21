@@ -136,14 +136,14 @@ export class BotService {
     let discordUser = await this.messageService.getUser(bot._id)
 
     if (!discordUser.bot) {
-      throw new NotBot('The id is not a bot.')
+      throw new NotBot(false, discordUser.id)
     }
 
     if (bot.details.otherOwners !== undefined) {
       for (let i = 0; i < bot.details.otherOwners.length; i++) {
         discordUser = await this.messageService.getUser(bot.details.otherOwners[i])
         if (discordUser.bot) {
-          throw new NotBot('The otherOwners id is not a user.')
+          throw new NotBot(true, discordUser.id)
         }
 
         await this.userService.register(discordUser.id)
@@ -229,7 +229,7 @@ export class BotService {
     for (let i = 0; i < bot.details.otherOwners.length; i++) {
       const discordUser = await this.discordService.getUser(bot.details.otherOwners[i])
       if (discordUser.bot) {
-        throw new NotBot('The otherOwners id is not a user.')
+        throw new NotBot(true, discordUser.id)
       }
     }
 
@@ -264,21 +264,25 @@ export class BotService {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat([
         'iframe',
         'style',
-        'img'
+        'img',
+        'embed'
       ]),
       allowedAttributes: {
         iframe: [
           'sandbox',
-          'width',
-          'heigth',
           'title',
           'border'
+        ],
+        embed: [
         ],
         '*': [
           'style',
           'src',
           'href',
-          'class'
+          'class',
+          'id',
+          'width',
+          'heigth'
         ]
       },
       transformTags: {
