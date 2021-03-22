@@ -38,6 +38,10 @@ export class MessageService implements OnModuleInit {
           correlationId: id,
           replyTo: assert?.queue
         })
+
+        setTimeout(() => {
+          reject(new Error('falhou no tempo'))
+        }, 20000)
       } else {
         reject(new Error('Queue undefinied'))
       }
