@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from '../auth/jwt-auth.guard'
 import { RequestUserPayload } from '../auth/jwt.payload'
 import TestWebhookDto from './dtos/test/test-webhook.sto'
@@ -14,11 +14,10 @@ export default class WebhookController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseGuards(WebhookGuard)
-  async testWebhook (@Body() webhook: TestWebhookDto, @Req() req: Express.Request): Promise<{ code: number }> {
+  async testWebhook (@Body() webhook: TestWebhookDto, @Req() req: Express.Request): Promise<void> {
     const { userId } = req.user as RequestUserPayload
-    const code = await this.webhookService.validateWebhook(webhook, userId)
-    return {
-      code: code
+    if (!await this.webhookService.validateWebhook(webhook, userId)) {
+      throw new HttpException('Webhook test failed', HttpStatus.BAD_REQUEST)
     }
   }
 

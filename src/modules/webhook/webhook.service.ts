@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { WebhookTypes } from '../users-bots/bots/enums/webhook.enums'
 import TestWebhookDto from './dtos/test/test-webhook.sto'
 
 @Injectable()
 export default class WebhookService {
-  async validateWebhook (webhook: TestWebhookDto, userId: string): Promise<number> {
+  async validateWebhook (webhook: TestWebhookDto, userId: string): Promise<boolean> {
     let message
     if (webhook.type === WebhookTypes.Discord) {
       message = {
@@ -26,15 +26,10 @@ export default class WebhookService {
       }
 
       try {
-        const { status } = await axios.post(webhook.url, message)
-        return status
-      } catch (error) {
-        if (error.isAxiosError as boolean) {
-          const e = error as AxiosError
-          return e.response?.status as number
-        }
-        console.log(error)
-        throw new HttpException('Erro ao testar webhook', HttpStatus.INTERNAL_SERVER_ERROR)
+        await axios.post(webhook.url, message)
+        return true
+      } catch {
+        return false
       }
     } else if (webhook.type === WebhookTypes.Server) {
       message = {
@@ -44,19 +39,14 @@ export default class WebhookService {
       }
 
       try {
-        const { status } = await axios.post(webhook.url, message, {
+        await axios.post(webhook.url, message, {
           headers: {
             Authorization: webhook.authorization
           }
         })
-        return status
-      } catch (error) {
-        if (error.isAxiosError as boolean) {
-          const e = error as AxiosError
-          return e.response?.status as number
-        }
-        console.log(error)
-        throw new HttpException('Erro ao testar webhook', HttpStatus.INTERNAL_SERVER_ERROR)
+        return true
+      } catch {
+        return false
       }
     }
 
