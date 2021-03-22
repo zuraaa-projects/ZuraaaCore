@@ -17,7 +17,9 @@ export class MessageService implements OnModuleInit {
   }
 
   async send (buffer: string, queue: string): Promise<string> {
-    const assert = await this.channel?.assertQueue('')
+    const assert = await this.channel?.assertQueue('', {
+      exclusive: true
+    })
     return await new Promise((resolve, reject) => {
       if (assert !== undefined) {
         const id = uuid()
@@ -32,6 +34,8 @@ export class MessageService implements OnModuleInit {
           } else {
             reject(new Error('Message null'))
           }
+        }, {
+          noAck: true
         }).catch(reject)
 
         this.channel?.sendToQueue(queue, Buffer.from(buffer), {
