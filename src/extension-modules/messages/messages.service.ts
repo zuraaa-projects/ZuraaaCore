@@ -53,16 +53,19 @@ export class MessageService implements OnModuleInit {
   }
 
   async getUser (id: string): Promise<DiscordUser> {
+    console.log('Getting user', id)
     let user = this.cache.get<DiscordUser>(id)
-    if (user === undefined) {
+    if (user == null) {
       try {
         user = JSON.parse(await this.send(id, 'getUser'))
         if (user == null) {
           console.error('Fail get user')
         }
+        console.log('setting to cache')
         this.cache.set(id, user, 3600)
+        console.log(this.cache.get(id))
       } catch (error) {
-        console.error('Fail get user')
+        console.error('Fail get user', error.message)
       }
     }
 
