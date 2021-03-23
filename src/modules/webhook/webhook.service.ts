@@ -11,7 +11,7 @@ export default class WebhookService {
       message = {
         embeds: [
           {
-            title: 'Votou no Zuraaa! List',
+            title: 'Teste de voto no Zuraaa! List',
             description: 'Esse é um teste de WebHook do Zuraaa!',
             color: 16777088,
             footer: {
@@ -35,7 +35,8 @@ export default class WebhookService {
       message = {
         user_id: userId,
         bot_id: '745828915993640980',
-        votes: '1000000'
+        votes: 1000000,
+        test: true
       }
 
       try {
