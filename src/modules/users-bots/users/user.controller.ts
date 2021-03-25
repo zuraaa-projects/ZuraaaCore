@@ -31,7 +31,7 @@ export default class UserController {
   async show (@Param('id') id: string): Promise<User> {
     const user = await this.userService.show(id)
 
-    if (user === undefined || _.isEmpty(user)) {
+    if (user == null) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
     }
 
@@ -42,7 +42,7 @@ export default class UserController {
   async getBots (@Param('id') id: string): Promise<Bot[]> {
     const user = await this.userService.show(id)
 
-    if (user === undefined || _.isEmpty(user)) {
+    if (user == null) {
       throw new HttpException('User was not found.', HttpStatus.NOT_FOUND)
     }
 
@@ -51,7 +51,11 @@ export default class UserController {
     const botsFormated: Bot[] = []
 
     for (const bot of bots) {
-      botsFormated.push(new Bot(bot, false, false, false))
+      if (bot.approvedBy == null) {
+        continue
+      } else {
+        botsFormated.push(new Bot(bot, false, false, false))
+      }
     }
 
     return botsFormated
@@ -63,7 +67,7 @@ export default class UserController {
     const { userId } = req.user as RequestUserPayload
 
     const updatedData = await this.userService.updateMe(userData, userId)
-    if (updatedData === undefined || _.isEmpty(updatedData)) {
+    if (updatedData == null) {
       throw new HttpException('Could not validate the User or Discord Service is unstable.', HttpStatus.INTERNAL_SERVER_ERROR)
     }
     return new User(updatedData, false, false)

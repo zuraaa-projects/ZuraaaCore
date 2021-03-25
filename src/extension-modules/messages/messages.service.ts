@@ -4,6 +4,8 @@ import { v4 as uuid } from 'uuid'
 import DiscordUser from './interfaces/discord-user'
 import { rabbit } from '../../../config.json'
 import NodeCache from 'node-cache'
+import { Bot } from 'src/modules/users-bots/bots/schemas/Bot.schema'
+import { User } from 'src/modules/users-bots/users/schemas/User.schema'
 
 @Injectable()
 export class MessageService implements OnModuleInit {
@@ -67,5 +69,15 @@ export class MessageService implements OnModuleInit {
     }
 
     return user as DiscordUser
+  }
+
+  sendRemove (bot: Bot, reason: string, author: User): void {
+    this.send(JSON.stringify({
+      bot: bot,
+      reason: reason,
+      author: author
+    }), 'sendRemove').catch(() => {
+      console.error('Falha ao enviar a mensagem que o bot foi removido')
+    })
   }
 }

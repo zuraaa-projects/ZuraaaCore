@@ -187,7 +187,11 @@ export class BotService {
     }
 
     const bot = await this.BotModel.findById(id).exec()
-    if (bot === null) {
+    if (bot == null) {
+      return null
+    }
+
+    if (bot.approvedBy == null) {
       return null
     }
 

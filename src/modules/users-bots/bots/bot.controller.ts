@@ -1,5 +1,6 @@
 import { Body, Query, Req, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
+import { MessageService } from 'src/extension-modules/messages/messages.service'
 import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
 import { JwtOptionalAuthGuard } from 'src/modules/auth/jwt-optional-auth.guard'
 import { RequestUserPayload, RoleLevel } from 'src/modules/auth/jwt.payload'
@@ -39,6 +40,7 @@ import {
   Res,
   Put
 } from '@nestjs/common'
+import { RemoveBotDto } from './dtos/remove/remove-bot.dto'
 
 @Controller('bots')
 export default class BotController {
@@ -46,7 +48,8 @@ export default class BotController {
     private readonly botService: BotService,
     private readonly userService: UserService,
     private readonly discordBotService: DiscordBotService,
-    private readonly reportService: ReportService
+    private readonly reportService: ReportService,
+    private readonly messageService: MessageService
   ) {}
 
   @Get(':id')
@@ -58,7 +61,7 @@ export default class BotController {
     if (user !== false) {
       bot = await this.botService.show(id, true, false, true)
 
-      if (bot === undefined || _.isEmpty(bot)) {
+      if (bot == null) {
         throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
       }
 
@@ -72,9 +75,13 @@ export default class BotController {
       }
     } else {
       bot = await this.botService.show(id, true, false)
+
+      if (bot?.approvedBy == null) {
+        throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+      }
     }
 
-    if (bot === undefined || _.isEmpty(bot)) {
+    if (bot == null) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
     return bot
@@ -82,11 +89,14 @@ export default class BotController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove (@Param('id') id: string, @Req() req: Express.Request): Promise<{deleted: boolean}> {
+  async remove (@Param('id') id: string, @Body() body: RemoveBotDto, @Req() req: Express.Request): Promise<{deleted: boolean}> {
     const { role, userId } = req.user as RequestUserPayload
     const bot = await this.botService.show(id, false)
     if (bot !== undefined) {
       if (role >= RoleLevel.adm || bot.owner === userId) {
+        const user = await this.userService.show(userId) as User
+        this.messageService.sendRemove(bot, body.reason, user)
+
         return {
           deleted: await this.botService.delete(id)
         }
@@ -181,7 +191,7 @@ export default class BotController {
     try {
       const { userId } = req.user as RequestUserPayload
       const bot = await this.botService.vote(id, userId)
-      if (bot !== null) {
+      if (bot != null) {
         return bot
       } else {
         throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
