@@ -282,7 +282,7 @@ export default class BotController {
         }
 
         if (botUpdate != null) {
-          await this.discordBotService.updateBot(botUpdate, await this.userService.show(botUpdate.owner as string) as User)
+          await this.discordBotService.updateBot(botUpdate, await this.userService.show(userId) as User)
           return botUpdate
         } else {
           throw new HttpException('Fail to update bot.', HttpStatus.INTERNAL_SERVER_ERROR)
