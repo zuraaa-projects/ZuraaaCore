@@ -3,12 +3,13 @@ import { PassportStrategy } from '@nestjs/passport'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { JwtPayload, RequestUserPayload } from './jwt.payload'
 import { jwt } from '../../../config.json'
-import _ from 'lodash'
 import { UserService } from '../users-bots/users/user.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor (private readonly userService: UserService) {
+  constructor (
+    private readonly userService: UserService
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -19,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate (payload: JwtPayload): Promise<RequestUserPayload> {
     const user = await this.userService.findById(payload.sub)
 
-    if (user === undefined || _.isEmpty(user)) {
+    if (user == null) {
       throw new HttpException('Token data is invalid.', HttpStatus.BAD_REQUEST)
     }
 

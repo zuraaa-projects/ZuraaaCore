@@ -7,6 +7,8 @@ import { jwt } from '../../../config.json'
 import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
 import { UserBotModule } from '../users-bots/user-bot.module'
+import { MongooseModule } from '@nestjs/mongoose'
+import { Jwt, JwtSchema } from './schema/jwt.schema'
 
 @Module({
   imports: [
@@ -18,7 +20,13 @@ import { UserBotModule } from '../users-bots/user-bot.module'
       signOptions: {
         expiresIn: '604800s'
       }
-    })
+    }),
+    MongooseModule.forFeature([
+      {
+        name: Jwt.name,
+        schema: JwtSchema
+      }
+    ])
   ],
   controllers: [
     AuthController
