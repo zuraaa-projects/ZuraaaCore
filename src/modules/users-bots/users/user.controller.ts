@@ -24,7 +24,7 @@ export default class UserController {
       throw new HttpException('Could not validate the User or Discord Service is unstable', HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    return new User(returnData, false, false)
+    return new User(returnData, true, false)
   }
 
   @Get(':id')
