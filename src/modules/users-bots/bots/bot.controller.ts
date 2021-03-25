@@ -52,11 +52,28 @@ export default class BotController {
   @Get(':id')
   @UseGuards(JwtOptionalAuthGuard)
   async show (@Param('id') id: string, @Req() req: Express.Request): Promise<Bot> {
-    const user = req.user as RequestUserPayload
+    const user = req.user as RequestUserPayload | boolean
+    let bot
 
-    console.log(user)
+    if (user !== false) {
+      bot = await this.botService.show(id, true, false, true)
 
-    const bot = await this.botService.show(id, true, false)
+      if (bot === undefined || _.isEmpty(bot)) {
+        throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+      }
+
+      if ((user as RequestUserPayload).role >= RoleLevel.adm ||
+        bot.owner === (user as RequestUserPayload).userId ||
+        ((bot.details.otherOwners as string[]).findIndex(x => x === (user as RequestUserPayload).userId) !== -1)
+      ) {
+        return bot
+      } else {
+        return new Bot(bot, true, false, false)
+      }
+    } else {
+      bot = await this.botService.show(id, true, false)
+    }
+
     if (bot === undefined || _.isEmpty(bot)) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
     }
@@ -243,7 +260,7 @@ export default class BotController {
     let botUpdate = await this.botService.show(id, false)
 
     if (botUpdate != null) {
-      if (role >= RoleLevel.adm || botUpdate.owner === userId) {
+      if (role >= RoleLevel.adm || botUpdate.owner === userId || ((botUpdate.details.otherOwners as string[]).findIndex(x => x === userId) !== -1)) {
         try {
           botUpdate = await this.botService.update(bot, botUpdate)
         } catch (error) {
