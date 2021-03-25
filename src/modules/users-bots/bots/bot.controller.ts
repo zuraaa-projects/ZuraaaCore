@@ -1,18 +1,22 @@
 import { Body, Query, Req, UploadedFiles } from '@nestjs/common/decorators/http/route-params.decorator'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import { ReportPath } from 'src/extension-modules/report/interfaces/ReportPath'
+import { JwtOptionalAuthGuard } from 'src/modules/auth/jwt-optional-auth.guard'
 import { RequestUserPayload, RoleLevel } from 'src/modules/auth/jwt.payload'
 import { ReportService } from 'src/extension-modules/report/report.service'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
+import { validateReCaptcha } from 'src/utils/validate-captcha'
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
 import ApproveReprove from './interfaces/approve-reprove'
 import CreateBotDto from './dtos/created-edited/bot.dto'
+import UpdateBotDto from './dtos/update/update-bot.dto'
 import { BotReport } from './dtos/report/bot-report'
 import { User } from '../users/schemas/User.schema'
 import UploadFiles from './interfaces/upload-files'
 import { UserService } from '../users/user.service'
 import Reason from './dtos/approve-reprove/reason'
 import { SvgCreator } from 'src/utils/svg-creator'
+import { VoteDto } from './dtos/vote/vote.dto'
 import TimeError from './exceptions/TimeError'
 import { NotBot } from './exceptions/not-bot'
 import FindBot from './interfaces/find-bot'
@@ -35,9 +39,6 @@ import {
   Res,
   Put
 } from '@nestjs/common'
-import UpdateBotDto from './dtos/update/update-bot.dto'
-import { VoteDto } from './dtos/vote/vote.dto'
-import { validateReCaptcha } from 'src/utils/validate-captcha'
 
 @Controller('bots')
 export default class BotController {
@@ -49,7 +50,12 @@ export default class BotController {
   ) {}
 
   @Get(':id')
-  async show (@Param('id') id: string): Promise<Bot> {
+  @UseGuards(JwtOptionalAuthGuard)
+  async show (@Param('id') id: string, @Req() req: Express.Request): Promise<Bot> {
+    const user = req.user as RequestUserPayload
+
+    console.log(user)
+
     const bot = await this.botService.show(id, true, false)
     if (bot === undefined || _.isEmpty(bot)) {
       throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
