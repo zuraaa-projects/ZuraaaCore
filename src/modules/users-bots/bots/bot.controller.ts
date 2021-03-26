@@ -75,10 +75,6 @@ export default class BotController {
       }
     } else {
       bot = await this.botService.show(id, true, false)
-
-      if (bot?.approvedBy == null) {
-        throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
-      }
     }
 
     if (bot == null) {
