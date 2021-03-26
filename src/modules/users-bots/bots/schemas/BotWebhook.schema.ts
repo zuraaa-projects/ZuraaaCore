@@ -22,13 +22,13 @@ export default class BotWebhook {
     default: null,
     type: String
   })
-  authorization: string
+  authorization: string | null
 
   @Prop({
     default: null,
     type: String
   })
-  url: string
+  url: string | null
 
   @Prop({
     default: 0
