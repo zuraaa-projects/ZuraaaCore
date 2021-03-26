@@ -269,8 +269,8 @@ export class BotService {
     botDb.details.website = bot.details.website
     botDb.details.otherOwners = bot.details.otherOwners
     botDb.webhook.type = bot.webhook.type
-    botDb.webhook.url = bot.webhook.url
-    botDb.webhook.authorization = bot.webhook.authorization
+    botDb.webhook.url = bot.webhook.url ?? null
+    botDb.webhook.authorization = bot.webhook.authorization ?? null
 
     return new Bot(await botDb.save(), false, false, false)
   }
