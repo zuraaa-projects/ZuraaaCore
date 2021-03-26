@@ -21,7 +21,3 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: SonarCloud Scan
-    uses: sonarsource/sonarcloud-github-action@master
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
