@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.6.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Arquivos", "Arquivos", "{3F15DF23-55C9-4D7A-B9C7-9FEFD850287D}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|x64.Build.0 = Release|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB35DEA5-FF83-4F9D-982D-B8FA77A5A777}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52832A5B-C17B-4577-ADD9-0AC43F1F8200}
+	EndGlobalSection
+EndGlobal
