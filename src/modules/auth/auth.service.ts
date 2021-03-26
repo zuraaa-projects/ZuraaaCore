@@ -29,7 +29,7 @@ export class AuthService {
   async getUser (id: string): Promise<User> {
     const userDb = await this.userService.show(id)
 
-    if (userDb === undefined) {
+    if (userDb == null) {
       throw new HttpException('User undefined', HttpStatus.BAD_REQUEST)
     }
 
@@ -38,22 +38,39 @@ export class AuthService {
 
   async login (user: User): Promise<{ access_token: string, role: number }> {
     const payload: JwtPayload = {
-      role: (user.details.role !== undefined) ? user.details.role : 0,
+      role: (user.details.role != null) ? user.details.role : 0,
       sub: user._id
     }
 
-    const token = new JwtToken()
-    token.token = this.jwtService.sign(payload)
+    const token = this.jwtService.sign(payload)
 
-    const jwt = new this.JwtModel()
-    jwt._id = user._id
-    jwt.tokens.push(token)
-
-    await jwt.save()
+    await this.saveToken(user._id, token)
 
     return {
-      access_token: token.token,
-      role: (user.details.role !== undefined) ? user.details.role : 0
+      access_token: token,
+      role: (user.details.role != null) ? user.details.role : 0
+    }
+  }
+
+  private async saveToken (userId: string, token: string): Promise<void> {
+    const jwt = await this.JwtModel.findById(userId)
+
+    if (jwt != null) {
+      const jwtToken = new JwtToken()
+      jwtToken.token = token
+
+      jwt.tokens.push(jwtToken)
+
+      await jwt.save()
+    } else {
+      const jwtToken = new JwtToken()
+      jwtToken.token = token
+
+      const jwt = new this.JwtModel()
+      jwt._id = userId
+
+      jwt.tokens.push(jwtToken)
+      await jwt.save()
     }
   }
 }

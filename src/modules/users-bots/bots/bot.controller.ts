@@ -85,11 +85,29 @@ export default class BotController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async remove (@Param('id') id: string, @Body() body: RemoveBotDto, @Req() req: Express.Request): Promise<{deleted: boolean}> {
+  async remove (@Param('id') id: string, @Req() req: Express.Request): Promise<{deleted: boolean}> {
+    const { userId } = req.user as RequestUserPayload
+    const bot = await this.botService.show(id, false)
+    if (bot != null) {
+      if (bot.owner === userId) {
+        return {
+          deleted: await this.botService.delete(id)
+        }
+      } else {
+        throw new HttpException('You do not have sufficient permission to remove this bot.', HttpStatus.UNAUTHORIZED)
+      }
+    } else {
+      throw new HttpException('Bot was not found.', HttpStatus.NOT_FOUND)
+    }
+  }
+
+  @Post(':id/reason-remove')
+  @UseGuards(JwtAuthGuard)
+  async reasonRemove (@Param('id') id: string, @Body() body: RemoveBotDto, @Req() req: Express.Request): Promise<{deleted: boolean}> {
     const { role, userId } = req.user as RequestUserPayload
     const bot = await this.botService.show(id, false)
-    if (bot !== undefined) {
-      if (role >= RoleLevel.adm || bot.owner === userId) {
+    if (bot != null) {
+      if (role >= RoleLevel.adm) {
         const user = await this.userService.show(userId) as User
         this.messageService.sendRemove(bot, body.reason, user)
 
