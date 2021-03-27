@@ -73,4 +73,38 @@ export class AuthService {
       await jwt.save()
     }
   }
+
+  async findToken (token: string): Promise<boolean> {
+    const jwt = await this.JwtModel.findOne({
+      tokens: {
+        $elemMatch: {
+          token: token
+        }
+      }
+    }).exec()
+
+    if (jwt == null) {
+      return false
+    }
+
+    let contains = false
+
+    for (let i = 0; i < jwt.tokens.length; i++) {
+      const tokenJwt = jwt.tokens[i]
+      tokenJwt.created.setDate(tokenJwt.created.getDate() + 15)
+      if (tokenJwt.created <= new Date()) {
+        jwt.tokens.splice(i, 1)
+      }
+
+      if (!contains) {
+        if (tokenJwt.token === token) {
+          contains = true
+        }
+      }
+    }
+
+    await jwt.save()
+
+    return contains
+  }
 }

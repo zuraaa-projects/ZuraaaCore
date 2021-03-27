@@ -12,7 +12,7 @@ export class JwtAuthRoleGuard implements CanActivate {
 
   canActivate (context: ExecutionContext): boolean {
     const role = this.reflector.get<RoleLevel>('role', context.getHandler())
-    if (role === undefined) {
+    if (role == null) {
       return true
     }
     const request = context.switchToHttp().getRequest()
