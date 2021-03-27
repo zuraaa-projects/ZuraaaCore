@@ -267,10 +267,13 @@ export class BotService {
     botDb.details.customInviteLink = bot.details.customInviteLink
     botDb.details.supportServer = bot.details.supportServer
     botDb.details.website = bot.details.website
+    botDb.details.github = bot.details.github
     botDb.details.otherOwners = bot.details.otherOwners
-    botDb.webhook.type = bot.webhook.type
-    botDb.webhook.url = bot.webhook.url ?? null
-    botDb.webhook.authorization = bot.webhook.authorization ?? null
+    if (bot.webhook != null) {
+      botDb.webhook.type = bot.webhook.type
+      botDb.webhook.url = bot.webhook.url ?? null
+      botDb.webhook.authorization = bot.webhook.authorization ?? null
+    }
 
     return new Bot(await botDb.save(), false, false, false)
   }
