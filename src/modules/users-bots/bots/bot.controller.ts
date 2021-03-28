@@ -140,8 +140,8 @@ export default class BotController {
     const queryPage = Number.parseInt(query.page)
     const queryLimit = Number.parseInt(query.limit)
 
-    const page = (Number.isNaN(queryPage) || queryPage < 1) ? 1 : queryPage
-    const limit = (Number.isNaN(queryLimit) || queryLimit < 1) ? 1 : (queryLimit > 16) ? 16 : queryLimit
+    const page = Number.isNaN(queryPage) ? 1 : queryPage < 1 ? 1 : queryPage
+    const limit = Number.isNaN(queryLimit) ? 16 : queryLimit < 1 ? 1 : (queryLimit > 16) ? 16 : queryLimit
 
     switch (query.type) {
       case 'count':
