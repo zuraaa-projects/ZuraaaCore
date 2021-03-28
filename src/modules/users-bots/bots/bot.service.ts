@@ -132,6 +132,21 @@ export class BotService {
     return botsFormated
   }
 
+  async showRandom (limite = 18): Promise<Bot[]> {
+    const bots = await this.BotModel.aggregate([
+      {
+        $match: {
+          approvedBy: { $ne: null }
+        }
+      },
+      {
+        $sample: { size: limite }
+      }
+    ]).exec()
+
+    return bots
+  }
+
   async add (bot: CreateBotDto, userPayload: RequestUserPayload): Promise<Bot | null> {
     let discordUser = await this.messageService.getUser(bot._id)
     // let discordUser = await this.discordService.getUser(bot._id)

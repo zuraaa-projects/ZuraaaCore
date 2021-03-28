@@ -137,6 +137,12 @@ export default class BotController {
 
   @Get()
   async showAll (@Query() query: FindBot): Promise<Bot[] | { bots_count: number } | undefined> {
+    const queryPage = Number.parseInt(query.page)
+    const queryLimit = Number.parseInt(query.limit)
+
+    const page = (Number.isNaN(queryPage) || queryPage < 1) ? 1 : queryPage
+    const limit = (Number.isNaN(queryLimit) || queryLimit < 1) ? 1 : (queryLimit > 16) ? 16 : queryLimit
+
     switch (query.type) {
       case 'count':
         return {
@@ -145,19 +151,19 @@ export default class BotController {
       case 'top':
         return (
           await this.botService
-            .showAll('', 'mostVoted', 1, 6)
+            .showAll('', 'mostVoted', page, limit)
         ).map(bot => new Bot(bot, false, false, false))
       case 'toapprove':
         return await this.botService.botsToApprove()
+      case 'random': {
+        const bots = await this.botService.showRandom(limit)
+
+        return bots.map(bot => new Bot(bot, false, false, false))
+      }
       default: {
-        let page = Number(query.page)
         const tags = query.tags?.split(',')
 
-        if (Number.isNaN(page) || page < 1) {
-          page = 1
-        }
-
-        const bots = await this.botService.showAll(query.search ?? '', 'recent', page, 18, tags)
+        const bots = await this.botService.showAll(query.search ?? '', 'recent', page, limit, tags)
 
         if (_.isEmpty(bots)) {
           throw new HttpException('No bot found in the list.', HttpStatus.NOT_FOUND)
