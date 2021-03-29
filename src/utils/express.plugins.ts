@@ -8,6 +8,7 @@ export const helmet = Helmet({
     allow: false
   },
   permittedCrossDomainPolicies: false,
-  contentSecurityPolicy: false,
-  hsts: false
+  contentSecurityPolicy: {},
+  hsts: false,
+  xssFilter: false
 })
