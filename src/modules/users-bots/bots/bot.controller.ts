@@ -195,7 +195,7 @@ export default class BotController {
       }
     }
     if (botResult === null) {
-      throw new HttpException('The bot already exists.', HttpStatus.AMBIGUOUS)
+      throw new HttpException('The bot already exists.', HttpStatus.CONFLICT)
     } else {
       return botResult
     }
