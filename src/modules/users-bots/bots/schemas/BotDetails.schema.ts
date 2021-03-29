@@ -123,9 +123,11 @@ export class BotDetails {
   customURL: string | null
 
   @Prop({
-    maxlength: 2083
+    maxlength: 2083,
+    default: null,
+    type: String
   })
-  donate: string
+  donate: string | null
 
   @Prop({
     maxlength: 100

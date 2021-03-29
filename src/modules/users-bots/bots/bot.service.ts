@@ -18,6 +18,7 @@ import sanitizeHtml from 'sanitize-html'
 import md from 'markdown-it'
 import axios from 'axios'
 import _ from 'lodash'
+import { httpLink } from 'src/utils/http-link'
 
 @Injectable()
 export class BotService {
@@ -181,6 +182,10 @@ export class BotService {
         : md().render(longDescription)
     }
 
+    botElement.details.website = httpLink(bot.details.website)
+    botElement.details.customInviteLink = httpLink(bot.details.customInviteLink)
+    botElement.details.donate = httpLink(bot.details.donate)
+
     const botTrated = await updateDiscordData(botElement, this.discordService, this.avatarService, true)
     if (botTrated === undefined) {
       throw new Error('Discord Retornou dados invalidos.')
@@ -279,11 +284,12 @@ export class BotService {
     botDb.details.prefix = bot.details.prefix
     botDb.details.tags = bot.details.tags
     botDb.details.library = bot.details.library
-    botDb.details.customInviteLink = bot.details.customInviteLink
+    botDb.details.customInviteLink = httpLink(bot.details.customInviteLink)
     botDb.details.supportServer = bot.details.supportServer
-    botDb.details.website = bot.details.website
+    botDb.details.website = httpLink(bot.details.website)
     botDb.details.github = bot.details.github
     botDb.details.otherOwners = bot.details.otherOwners
+    botDb.details.donate = httpLink(bot.details.donate)
     if (bot.webhook != null) {
       botDb.webhook.type = bot.webhook.type
       botDb.webhook.url = bot.webhook.url ?? null
