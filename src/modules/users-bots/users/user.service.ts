@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
 import DiscordUser from 'src/extension-modules/discord/interfaces/DiscordUser'
+import { MessageService } from 'src/extension-modules/messages/messages.service'
 import { RoleLevel } from 'src/modules/auth/jwt.payload'
 import { AvatarService } from 'src/modules/avatars/avatar.service'
 import { updateDiscordData } from 'src/utils/discord-update-data'
@@ -15,7 +16,8 @@ export class UserService {
   constructor (
     @InjectModel(User.name) private readonly UserModel: Model<UserDocument>,
     private readonly discordService: DiscordBotService,
-    private readonly avatarService: AvatarService
+    private readonly avatarService: AvatarService,
+    private readonly messageService: MessageService
   ) { }
 
   async create (user: User): Promise<UserDocument> {
@@ -34,7 +36,7 @@ export class UserService {
       })
     }
 
-    return await updateDiscordData(user, this.discordService, this.avatarService) as User
+    return await updateDiscordData(user, this.messageService, this.avatarService) as User
   }
 
   async show (id: string): Promise<User | undefined> {
@@ -51,7 +53,7 @@ export class UserService {
     if (result === null) {
       return
     }
-    return await updateDiscordData(result, this.discordService, this.avatarService)
+    return await updateDiscordData(result, this.messageService, this.avatarService)
   }
 
   async login (user: DiscordUser): Promise<User> {
@@ -72,7 +74,7 @@ export class UserService {
     if (userDb === null) {
       return
     }
-    const discordUserDb = await updateDiscordData(userDb, this.discordService, this.avatarService)
+    const discordUserDb = await updateDiscordData(userDb, this.messageService, this.avatarService)
     if (discordUserDb === undefined) {
       return
     }

@@ -11,11 +11,11 @@ export default class AvatarController {
     private readonly discordService: DiscordBotService
   ) {}
 
-  @Get(':id')
-  @Header('Cache-Control', 'public, max-age=60, only-if-cached')
-  async avatar (@Param('id') id: string, @Res() res: Response): Promise<void> {
+  @Get(':id/:avatar')
+  @Header('Cache-Control', 'public, max-age=31536000, immutable, only-if-cached')
+  async avatar (@Param('id') id: string, @Param('avatar') avatar: string, @Res() res: Response): Promise<void> {
     try {
-      const image = await this.avatarsService.getAvatar(id)
+      const image = await this.avatarsService.getAvatar(id, avatar)
       if (image != null) {
         res.contentType(image.type)
         res.send(image.data)
@@ -24,7 +24,7 @@ export default class AvatarController {
         res.redirect(`https://cdn.discordapp.com/embed/avatars/${_.toInteger(user.discriminator) % 5}.png`)
       }
     } catch (error) {
-      console.error('Not found')
+      console.error(`Avatar not found (${id}) {${avatar}}`)
       throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND)
     }
   }

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common'
 import { join } from 'path'
 import { stat } from 'fs'
-import { mkdir, readdir, readFile, rm, writeFile, rmdir } from 'fs/promises'
+import { mkdir, readdir, readFile, writeFile, rmdir } from 'fs/promises'
 import Image from './interfaces/Image'
 
 @Injectable()
@@ -16,21 +16,21 @@ export class AvatarService implements OnModuleInit {
     })
   }
 
-  async getAvatarFile (id: string): Promise<string | undefined> {
+  async getAvatarFile (id: string, avatarHash: string): Promise<string | undefined> {
     try {
-      const files = await readdir(join(this.cachePath, id))
+      const files = await readdir(join(this.cachePath, id, avatarHash))
       return files[0]
     } catch (error) {
       if (error.code !== 'ENOENT') {
-        console.error(error)
+        console.error('Pasta não encontrada')
       }
     }
   }
 
-  async getAvatar (id: string): Promise<Image | undefined> {
-    const file = await this.getAvatarFile(id)
+  async getAvatar (id: string, avatarHash: string): Promise<Image | undefined> {
+    const file = await this.getAvatarFile(id, avatarHash)
     if (file != null) {
-      const data = await readFile(join(this.cachePath, id, file))
+      const data = await readFile(join(this.cachePath, id, avatarHash, file))
       return {
         type: file,
         data
@@ -38,21 +38,20 @@ export class AvatarService implements OnModuleInit {
     }
   }
 
-  async writeAvatar (id: string, extension: string, avatar: Buffer): Promise<void> {
-    const old = await this.getAvatarFile(id)
-    const folder = join(this.cachePath, id)
-    if (old != null) {
-      await rm(join(folder, old))
-    } else {
-      await mkdir(folder)
-    }
+  async writeAvatar (id: string, extension: string, avatarHash: string, avatar: Buffer): Promise<void> {
+    const folder = join(this.cachePath, id, avatarHash)
+
+    await this.deleteAvatar(id)
+    await mkdir(folder, { recursive: true })
     await writeFile(join(folder, `${extension}`), avatar)
   }
 
   async deleteAvatar (id: string): Promise<void> {
     const folder = join(this.cachePath, id)
     try {
-      await rmdir(folder)
+      await rmdir(folder, {
+        recursive: true
+      })
     } catch (error) {
       console.error(`Falha ao remover cache (${id})`)
     }
