@@ -1,4 +1,4 @@
-import { Controller, Get, Header, HttpException, HttpStatus, Param, Res } from '@nestjs/common'
+import { Controller, Get, HttpException, HttpStatus, Param, Res } from '@nestjs/common'
 import { Response } from 'express'
 import _ from 'lodash'
 import { DiscordBotService } from 'src/extension-modules/discord/discord-bot.service'
@@ -12,13 +12,13 @@ export default class AvatarController {
   ) {}
 
   @Get(':id/:avatar')
-  @Header('Cache-Control', 'public, max-age=31536000, immutable, only-if-cached')
   async avatar (@Param('id') id: string, @Param('avatar') avatar: string, @Res() res: Response): Promise<void> {
     try {
       const image = await this.avatarsService.getAvatar(id, avatar)
       if (image != null) {
         res.contentType(image.type)
-        res.send(image.data)
+          .header('Cache-Control', 'public, max-age=31536000, immutable, only-if-cached')
+          .send(image.data)
       } else {
         const user = await this.discordService.getUser(id)
         res.redirect(`https://cdn.discordapp.com/embed/avatars/${_.toInteger(user.discriminator) % 5}.png`)
