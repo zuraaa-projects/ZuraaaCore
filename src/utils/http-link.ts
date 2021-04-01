@@ -6,6 +6,6 @@ export function httpLink (link: string): string | null {
       return link
     }
 
-    return 'http://' + link
+    return 'http://' + link.trim()
   }
 }
