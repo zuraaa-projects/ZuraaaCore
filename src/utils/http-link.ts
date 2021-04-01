@@ -2,7 +2,7 @@ export function httpLink (link: string): string | null {
   if (link == null) {
     return null
   } else {
-    if (link.match(/^https?:\/\//) != null) {
+    if (link.trim().match(/^https?:\/\//) != null) {
       return link
     }
 
