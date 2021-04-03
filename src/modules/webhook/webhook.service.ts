@@ -33,10 +33,13 @@ export default class WebhookService {
       }
     } else if (webhook.type === WebhookTypes.Server) {
       message = {
-        user_id: userId,
-        bot_id: '745828915993640980',
-        votes: 1000000,
-        test: true
+        type: 'vote',
+        test: true,
+        data: {
+          user_id: userId,
+          bot_id: '745828915993640980',
+          votes: 1000000
+        }
       }
 
       try {
