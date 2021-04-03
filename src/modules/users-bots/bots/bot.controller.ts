@@ -41,6 +41,7 @@ import {
   Put
 } from '@nestjs/common'
 import { RemoveBotDto } from './dtos/remove/remove-bot.dto'
+import { captcha } from '../../../../config.json'
 
 @Controller('bots')
 export default class BotController {
@@ -204,7 +205,7 @@ export default class BotController {
   @Post(':id/votes')
   @UseGuards(JwtAuthGuard)
   async vote (@Body() body: VoteDto, @Param('id') id: string, @Req() req: Express.Request): Promise<Bot> {
-    if (!await validateReCaptcha(body['g-recaptcha-response'])) {
+    if (captcha.enabled && !await validateReCaptcha(body['g-recaptcha-response'])) {
       throw new HttpException('ReCaptcha failed', HttpStatus.BAD_REQUEST)
     }
 

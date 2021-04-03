@@ -3,8 +3,10 @@ import Axios, { AxiosInstance } from 'axios'
 import _ from 'lodash'
 import NodeCache from 'node-cache'
 import { BotReport } from 'src/modules/users-bots/bots/dtos/report/bot-report'
+import { WebhookTypes } from 'src/modules/users-bots/bots/enums/webhook.enums'
 import { Bot } from 'src/modules/users-bots/bots/schemas/Bot.schema'
 import { User } from 'src/modules/users-bots/users/schemas/User.schema'
+import { avatarFormat } from 'src/utils/avatar-format'
 import { discord } from '../../../config.json'
 import { ReportPath } from '../report/interfaces/ReportPath'
 import DiscordUser from './interfaces/DiscordUser'
@@ -104,10 +106,70 @@ export class DiscordBotService {
   }
 
   async sendVote (user: User, bot: Bot): Promise<void> {
-    await this.api.post(`/channels/${discord.channels.logVote}/messages`, {
-      content: `${user.username}#${user.discriminator} (${user._id}) votou no bot \`${bot.username}#${bot.discriminator}\`\n` +
-        `${discord.url.siteBaseUrl}/bots/${(bot.details.customURL !== null) ? bot.details.customURL : bot._id}`
-    })
+    try {
+      await this.api.post(`/channels/${discord.channels.logVote}/messages`, {
+        content: `${user.username}#${user.discriminator} (${user._id}) votou no bot \`${bot.username}#${bot.discriminator}\`\n` +
+          `${discord.url.siteBaseUrl}/bots/${(bot.details.customURL !== null) ? bot.details.customURL : bot._id}`
+      })
+    } catch (error) {
+      console.error(`${new Date().toISOString()} Falha ao enviar o log de voto`)
+    }
+
+    switch (bot.webhook.type) {
+      case WebhookTypes.Discord: {
+        if (bot.webhook.url != null) {
+          const embed = {
+            title: 'Voto no Zuraaa! List',
+            description: `**${user.username}#${user.discriminator}** votou no bot **${bot.username}#${bot.discriminator}**`,
+            color: 16777088,
+            footer: {
+              text: user._id
+            },
+            timestamp: new Date().toISOString(),
+            thumbnail: {
+              url: avatarFormat(user)
+            }
+          }
+
+          try {
+            await Axios.post(bot.webhook.url, {
+              embeds: [
+                embed
+              ]
+            })
+          } catch (error) {
+            console.error(`${new Date().toISOString()} Falha ao enviar o webhook para o discord`)
+          }
+        }
+        break
+      }
+
+      case WebhookTypes.Server: {
+        if (bot.webhook.url != null) {
+          try {
+            await Axios.post(bot.webhook.url, {
+              type: 'vote',
+              data: {
+                user_id: user._id,
+                bot_id: bot._id,
+                votes: bot.votes.current
+              }
+            }, {
+              headers: {
+                Authorization: bot.webhook.authorization,
+                'Content-Type': 'application/json'
+              }
+            })
+          } catch (error) {
+            console.error(`${new Date().toISOString()} Falha ao enviar o webhook para o servidor Code: ${error.message as string}`)
+          }
+        }
+        break
+      }
+
+      default:
+        break
+    }
   }
 
   async banUser (user: User, author: User, reason: string): Promise<void> {
@@ -155,7 +217,7 @@ export class DiscordBotService {
           `${discord.url.siteBaseUrl}/bots/${bot._id}`
       })
     } catch (error) {
-
+      console.error(`${new Date().toISOString()} Falha ao enviar o log de validação do bot`)
     }
 
     try {
@@ -171,7 +233,7 @@ export class DiscordBotService {
         }
       })
     } catch (error) {
-
+      console.error(`${new Date().toISOString()} Falha ao enviar para o dono do bot que ele foi aprovado`)
     }
 
     try {
@@ -236,7 +298,7 @@ export class DiscordBotService {
         content: `\`${user.username}#${user.discriminator}\` enviou o bot **\`${bot.username}#${bot.discriminator}\`** (${bot._id}) para a aprovação. <@&${discord.roles.checker}>`
       })
     } catch (error) {
-      console.log('Falha ao enviar a mensagem de bot enviado')
+      console.error(`${new Date().toISOString()} Falha ao enviar a mensagem de bot enviado`)
     }
 
     try {
@@ -252,7 +314,7 @@ export class DiscordBotService {
         }
       })
     } catch (error) {
-      console.log('Falha ao enviar a mensagem de bot enviado para o dono')
+      console.error(`${new Date().toISOString()} Falha ao enviar a mensagem de bot enviado para o dono`)
     }
   }
 
@@ -264,7 +326,7 @@ export class DiscordBotService {
                  `${discord.url.siteBaseUrl}/bots/${bot._id}`
       })
     } catch (error) {
-      console.log('Falha ao enviar a mensagem de bot editado')
+      console.error(`${new Date().toISOString()} Falha ao enviar a mensagem de bot editado`)
     }
   }
 }

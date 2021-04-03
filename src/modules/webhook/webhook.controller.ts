@@ -27,6 +27,6 @@ export default class WebhookController {
   // async customWebhook (@Body() foda: any, @Req() req: Express.Request): Promise<void> {
   //   const { userId } = req.user as RequestUserPayload
   //   console.log(userId)
-  //   console.log(foda.user_id)
+  //   console.log(foda.data.user_id)
   // }
 }
