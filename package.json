@@ -37,7 +37,7 @@
         "jsdom": "^16.5.2",
         "lodash": "^4.17.21",
         "markdown-it": "^12.0.2",
-        "mime-types": "^2.1.29",
+        "mime-types": "^2.1.30",
         "mongoose": "^5.12.3",
         "node-cache": "^5.1.2",
         "passport": "^0.4.1",
