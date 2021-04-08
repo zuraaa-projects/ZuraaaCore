@@ -8,10 +8,6 @@ export enum BotsTags{
   musica = 'musica',
   moderacao = 'moderacao',
   economia = 'economia',
-  fortnite = 'fortnite',
-  lol = 'lol',
-  minecraft = 'minecraft',
-  hytale = 'hytale',
   nsfw = 'nsfw',
   outros = 'outros'
 }
