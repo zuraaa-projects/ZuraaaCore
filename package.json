@@ -34,7 +34,7 @@
         "class-validator": "^0.13.1",
         "d3": "^6.6.2",
         "helmet": "^4.4.1",
-        "jsdom": "^16.5.2",
+        "jsdom": "^16.5.3",
         "lodash": "^4.17.21",
         "markdown-it": "^12.0.2",
         "mime-types": "^2.1.30",
