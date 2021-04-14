@@ -54,8 +54,16 @@ export class BotService {
     return botsFormated
   }
 
-  async count (): Promise<number> {
-    return await this.BotModel.countDocuments()
+  async count (tags: string[] | undefined): Promise<number> {
+    const params: FilterQuery<unknown> = {}
+
+    if (tags != null) {
+      params['details.tags'] = {
+        $all: tags
+      }
+    }
+
+    return await this.BotModel.countDocuments(params)
   }
 
   async show (id: string, voteLog = false, ownerData = false, showWebhook = false): Promise<Bot | undefined> {

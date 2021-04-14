@@ -8,6 +8,7 @@ import { ReportService } from 'src/extension-modules/report/report.service'
 import { FileFieldsInterceptor } from '@nestjs/platform-express'
 import { validateReCaptcha } from 'src/utils/validate-captcha'
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard'
+import { RemoveBotDto } from './dtos/remove/remove-bot.dto'
 import ApproveReprove from './interfaces/approve-reprove'
 import CreateBotDto from './dtos/created-edited/bot.dto'
 import UpdateBotDto from './dtos/update/update-bot.dto'
@@ -17,6 +18,7 @@ import UploadFiles from './interfaces/upload-files'
 import { UserService } from '../users/user.service'
 import Reason from './dtos/approve-reprove/reason'
 import { SvgCreator } from 'src/utils/svg-creator'
+import { captcha } from '../../../../config.json'
 import { VoteDto } from './dtos/vote/vote.dto'
 import TimeError from './exceptions/TimeError'
 import { NotBot } from './exceptions/not-bot'
@@ -40,8 +42,6 @@ import {
   Res,
   Put
 } from '@nestjs/common'
-import { RemoveBotDto } from './dtos/remove/remove-bot.dto'
-import { captcha } from '../../../../config.json'
 
 @Controller('bots')
 export default class BotController {
@@ -145,10 +145,12 @@ export default class BotController {
     const limit = Number.isNaN(queryLimit) ? 18 : queryLimit < 1 ? 1 : (queryLimit > 18) ? 18 : queryLimit
 
     switch (query.type) {
-      case 'count':
+      case 'count': {
+        const tags = query.tags?.split(',')
         return {
-          bots_count: await this.botService.count()
+          bots_count: await this.botService.count(tags)
         }
+      }
       case 'top':
         return (
           await this.botService
