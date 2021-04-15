@@ -54,13 +54,18 @@ export class BotService {
     return botsFormated
   }
 
-  async count (tags: string[] | undefined): Promise<number> {
+  async count (tags: string[] | undefined, pesquisa: string): Promise<number> {
     const params: FilterQuery<unknown> = {}
 
     if (tags != null) {
       params['details.tags'] = {
         $all: tags
       }
+    }
+
+    if (pesquisa.length > 0) {
+      const regex = { $regex: pesquisa, $options: 'i' }
+      params.$or = [{ username: regex }, { 'details.shortDescription': regex }]
     }
 
     return await this.BotModel.countDocuments(params)
@@ -129,9 +134,6 @@ export class BotService {
       .sort(ordenar)
       .limit(limite)
       .skip((pagina - 1) * limite)
-      .setOptions({
-        // allowDiskUse: true
-      })
       .exec()
     const botsFormated: Bot[] = []
 

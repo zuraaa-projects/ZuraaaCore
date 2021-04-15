@@ -148,7 +148,7 @@ export default class BotController {
       case 'count': {
         const tags = query.tags?.split(',')
         return {
-          bots_count: await this.botService.count(tags)
+          bots_count: await this.botService.count(tags, query.search ?? '')
         }
       }
       case 'top':
@@ -166,15 +166,19 @@ export default class BotController {
       default: {
         const tags = query.tags?.split(',')
 
-        const bots = await this.botService.showAll(query.search ?? '', 'recent', page, limit, tags)
+        try {
+          const bots = await this.botService.showAll(query.search ?? '', 'recent', page, limit, tags)
 
-        if (_.isEmpty(bots)) {
+          if (_.isEmpty(bots)) {
+            throw new HttpException('No bot found in the list.', HttpStatus.NOT_FOUND)
+          }
+
+          return (
+            bots
+          ).map(bot => new Bot(bot, false, false, false))
+        } catch (error) {
           throw new HttpException('No bot found in the list.', HttpStatus.NOT_FOUND)
         }
-
-        return (
-          bots
-        ).map(bot => new Bot(bot, false, false, false))
       }
     }
   }
