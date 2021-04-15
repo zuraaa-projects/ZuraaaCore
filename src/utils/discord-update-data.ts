@@ -53,10 +53,10 @@ export async function updateDiscordData<Doc extends Document> (
     return await doc.save()
   } catch (err) {
     if (getError) {
-      console.log(err)
+      console.error(new Date().toISOString(), err.message, doc._id)
       return undefined
     }
-    console.log(err)
+    console.error(new Date().toISOString(), err.message, doc._id)
 
     return doc
   }
