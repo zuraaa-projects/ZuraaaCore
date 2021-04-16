@@ -32,7 +32,7 @@
         "axios": "^0.21.1",
         "class-transformer": "^0.3.1",
         "class-validator": "^0.13.1",
-        "d3": "^6.6.2",
+        "d3": "^6.7.0",
         "helmet": "^4.4.1",
         "jsdom": "^16.5.3",
         "lodash": "^4.17.21",
