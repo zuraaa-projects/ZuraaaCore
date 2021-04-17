@@ -91,6 +91,9 @@ export default class BotController {
     const bot = await this.botService.show(id, false)
     if (bot != null) {
       if (bot.owner === userId) {
+        const user = await this.userService.show(userId) as User
+        this.messageService.sendRemove(bot, '', user)
+
         return {
           deleted: await this.botService.delete(id)
         }
