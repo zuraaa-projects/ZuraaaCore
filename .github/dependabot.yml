@@ -22,17 +22,3 @@ updates:
     prefix: fix
     prefix-development: chore
     include: scope
-
-# hello-nuxt branch
-
-- package-ecosystem: npm
-  directory: '/'
-  schedule:
-    interval: daily
-    time: '00:00'
-  target_branch: hello-nuxt
-  open-pull-requests-limit: 10
-  commit-message:
-    prefix: fix
-    prefix-development: chore
-    include: scope
