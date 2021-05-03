@@ -33,7 +33,7 @@
         "class-transformer": "^0.3.1",
         "class-validator": "^0.13.1",
         "d3": "^6.7.0",
-        "helmet": "^4.5.0",
+        "helmet": "^4.6.0",
         "jsdom": "^16.5.3",
         "lodash": "^4.17.21",
         "markdown-it": "^12.0.6",
