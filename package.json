@@ -47,7 +47,7 @@
         "rxjs": "^6.6.7",
         "sanitize-html": "^2.3.3",
         "uuid": "^8.3.2",
-        "xss": "^1.0.8"
+        "xss": "^1.0.9"
     },
     "devDependencies": {
         "@nestjs/cli": "^7.6.0",
