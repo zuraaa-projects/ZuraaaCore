@@ -27,7 +27,7 @@
         "@nestjs/mongoose": "^7.2.4",
         "@nestjs/passport": "^7.1.5",
         "@nestjs/platform-express": "^7.6.15",
-        "@nestjs/throttler": "^1.1.3",
+        "@nestjs/throttler": "^1.2.0",
         "amqplib": "^0.7.1",
         "axios": "^0.21.1",
         "class-transformer": "^0.3.1",
