@@ -38,7 +38,7 @@
         "lodash": "^4.17.21",
         "markdown-it": "^12.0.6",
         "mime-types": "^2.1.30",
-        "mongoose": "^5.12.7",
+        "mongoose": "^5.13.0",
         "node-cache": "^5.1.2",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
