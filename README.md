@@ -33,4 +33,4 @@ $ npm start
 
 ### Fair Use
 
-- Fica livre o uso desse software bem como modificações no mesmo desde que dentro da licença GPL v3.0.
+- Fica livre o uso desse software bem como modificações no mesmo, pois pertence ao domínio público.
